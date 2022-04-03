@@ -4,6 +4,7 @@ import MainHeader from "./components/MainHeader/MainHeader";
 import AuthContext from "./store/AuthContext";
 import Login from "./components/Login/Login";
 import Home from "./components/Home/Home";
+import SubmitResource from "./components/Resources/SubmitResource";
 
 const App = () => {
   

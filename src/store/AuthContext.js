@@ -1,9 +1,10 @@
 import React, { useState, useEffect } from "react";
-import TorusSdk, { RedirectResult } from "@toruslabs/customauth";
+import TorusSdk from "@toruslabs/customauth";
 import { verifierMap, GOOGLE } from "../constants/constants";
 
 export const AuthContext = React.createContext({
   isLoggedIn: false,
+  createResource: false,
   torusDirectSdk: null,
   onLogout: () => {},
   onLogin: () => {},
@@ -11,8 +12,8 @@ export const AuthContext = React.createContext({
 
 export const AuthContextProvider = (props) => {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [createResource, setCreateResource] = useState(false);
   const [torusDirectSdk, setTorusDirectSdk] = useState(null);
-  const [loginTriggered, setLoginTriggered] = useState(false);
   const [loginDetails, setLoginDetails] = useState(null);
 
   useEffect(() => {
@@ -20,6 +21,7 @@ export const AuthContextProvider = (props) => {
     if (storedUserLoggedInInformation === "1") {
       setIsLoggedIn(true);
     }
+
   }, []);
 
   useEffect(() => {
@@ -42,11 +44,11 @@ export const AuthContextProvider = (props) => {
 
   const logoutHandler = () => {
     localStorage.removeItem("isLoggedIn");
+    setCreateResource(false);
     setIsLoggedIn(false);
   };
 
   const loginHandler = async () => {
-    console.log("Attempting to log in");
 
     try {
       const jwtParams = { domain: "https://dbio.us.auth0.com" };
@@ -65,13 +67,19 @@ export const AuthContextProvider = (props) => {
     }
 
     localStorage.setItem("isLoggedIn", "1");
-    console.log("hello world")
     setIsLoggedIn(true);
+  };
+
+  const createResourceHandler = () => {
+
+    setCreateResource(true);
   };
 
   return (
     <AuthContext.Provider
       value={{
+        createResource: createResource,
+        createResourceHandler,
         isLoggedIn: isLoggedIn,
         onLogout: logoutHandler,
         onLogin: loginHandler,
