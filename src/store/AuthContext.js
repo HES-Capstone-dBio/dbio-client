@@ -26,13 +26,11 @@ export const AuthContextProvider = (props) => {
     (async function () {
       try {
         const torusSDK = new TorusSdk({
-          baseUrl: window.location.origin,
-          redirectPathName: "",
+          baseUrl: `${window.location.origin}/serviceworker`,
           enableLogging: true,
-          uxMode: "redirect",
           network: "testnet",
         });
-        await torusSDK.init({ skipSw: true });
+        await torusSDK.init({ skipSw: false });
         
         setTorusDirectSdk(torusSDK);
       
@@ -67,7 +65,7 @@ export const AuthContextProvider = (props) => {
     }
 
     localStorage.setItem("isLoggedIn", "1");
-
+    console.log("hello world")
     setIsLoggedIn(true);
   };
 
