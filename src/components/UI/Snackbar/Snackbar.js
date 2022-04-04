@@ -34,7 +34,8 @@ const snackbar = (message, type = "success") => {
     const timeout = type === "error" ? 4000 : 2000;
     dismissSnackbar(previous, true);
     const snackbar = document.createElement("div");
-    snackbar.className = `${classes.snackbar} ${classes[`snackbar-${type.charAt(0).toUpperCase() + type.slice(1)}`]}`;
+    console.log(`snackbar type is ${type}`);
+    snackbar.className = `${classes.snackbar} ${classes[`snackbar-${type}`]}`;
     snackbar.setAttribute("role", "alert");
     //Adjust top position to account for the users scroll height
     snackbar.style.top = `${window.scrollY}px`;
@@ -55,7 +56,9 @@ const snackbar = (message, type = "success") => {
     /* eslint-disable */
     getComputedStyle(snackbar).top;
     /* eslint-disable */
-    snackbar.style.top = `${document.getElementById("dcp-gs-chunk").offsetTop - 19}px`;
+    snackbar.style.top = `${document.getElementById("snackbar").parentNode.height}px`;
+
+
     snackbar.style.opacity = "1";
 };
 
