@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from "react";
 import TorusSdk from "@toruslabs/customauth";
 import { verifierMap, GOOGLE } from "../constants/constants";
+import * as IronWeb from "@ironcorelabs/ironweb";
+import { initializeIroncoreUser } from "../ironcore/Initialization";
 
 export const AuthContext = React.createContext({
   isLoggedIn: false,
@@ -14,7 +16,6 @@ export const AuthContextProvider = (props) => {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [createResource, setCreateResource] = useState(false);
   const [torusDirectSdk, setTorusDirectSdk] = useState(null);
-  const [loginDetails, setLoginDetails] = useState(null);
 
   useEffect(() => {
     const storedUserLoggedInInformation = localStorage.getItem("isLoggedIn");
@@ -54,14 +55,36 @@ export const AuthContextProvider = (props) => {
       const jwtParams = { domain: "https://dbio.us.auth0.com" };
       const { typeOfLogin, clientId, verifier } = verifierMap[GOOGLE];
 
-      setLoginDetails(
-        await torusDirectSdk.triggerLogin({
-          typeOfLogin,
-          verifier,
-          clientId,
-          jwtParams,
-        })
-      );
+      const loginDetails = await torusDirectSdk.triggerLogin({
+        typeOfLogin,
+        verifier,
+        clientId,
+        jwtParams,
+      });
+
+      // Pull ID token from login details
+      const idToken = loginDetails.userInfo.idToken;
+
+      // Pull user private key from login details, this will be used
+      // as the passcode for ironcore SDK calls
+      const privKey = loginDetails.privateKey;
+
+      // Initialize the ironcore SDK
+      if (!IronWeb.isInitialized()) {
+        try {
+          const ironcoreInitResult = await initializeIroncoreUser(idToken, privKey);
+          console.log(`Initialized SDK as user ${ironcoreInitResult.user.id}`)
+          // @TODO Implement correct error handling to bubble up to UI
+        } catch(error) {
+          if (error.code === IronWeb.ErrorCodes.USER_PASSCODE_INCORRECT) {
+            console.log('Unable to initialize Ironcore: Incorrect user password');
+          } else if (error.code === IronWeb.ErrorCodes.USER_VERIFY_API_REQUEST_FAILURE) {
+            console.log('Unable to initialize Ironcore: Invalid JWT');
+          } else {
+            console.log(`error code is ${error.code.toString()}`);
+          }
+        }
+      }
     } catch (error) {
       console.error(error, "login caught");
     }
