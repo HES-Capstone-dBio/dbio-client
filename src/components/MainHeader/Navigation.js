@@ -12,7 +12,7 @@ const Navigation = () => {
       <ul>
         {ctx.isLoggedIn && (
           <li>
-            <a href="/">Users</a>
+            <button onClick={ctx.homeHandler}>Home</button>
           </li>
         )}
         {ctx.isLoggedIn && (

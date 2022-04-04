@@ -98,11 +98,22 @@ export const AuthContextProvider = (props) => {
     setCreateResource(true);
   };
 
+  /**
+   * The homeHandler should set the state of all other visual-component
+   * states to false, thus rendering the home page in App.js. For the time
+   * being the only other component state we need to manage is the 
+   * createResource state.
+   */
+  const homeHandler = () => {
+    setCreateResource(false);
+  };
+
   return (
     <AuthContext.Provider
       value={{
         createResource: createResource,
         createResourceHandler,
+        homeHandler,
         isLoggedIn: isLoggedIn,
         onLogout: logoutHandler,
         onLogin: loginHandler,
