@@ -60,6 +60,9 @@ export const AuthContextProvider = (props) => {
     // Remove group ID from storage
     localStorage.removeItem(GROUP_ID_STORAGE_KEY);
 
+    // Remove Ethereum public address from local storage
+    localStorage.removeItem("ETH_ADDR");
+
     // Clean up local storage
     localStorage.removeItem("isLoggedIn");
 
@@ -108,6 +111,10 @@ export const AuthContextProvider = (props) => {
           // Store user ID in local storage. This will be used to create a unique
           // test group for a user.
           localStorage.setItem("USER_ID", ironcoreInitResult.user.id);
+
+          // Store user public Ethereum address in local storage. This will be used
+          // for making backend API calls.
+          localStorage.setItem("ETH_ADDR", loginDetails.publicAddress);
 
           // Set the default group for the user (find this in Initialization.js)
           const testGroupDetails = await getTestGroupDetails();
