@@ -28,7 +28,6 @@ export const getResource = (resourceID, onFail) => {
  * never creates new resources.
  */
 export const createResource = (body, onSuccess, onFail) => {
-  console.log("in create resource action");
   return {
     type: "CREATE_RESOURCE",
     payload: {
