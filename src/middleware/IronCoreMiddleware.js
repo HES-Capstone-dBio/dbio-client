@@ -5,7 +5,7 @@ import showSnackbar from "../components/UI/Snackbar/Snackbar";
  * Take the create resource action and encrypt the resource body before passing
  * along the data to the next middleware.
  */
-function encrpytNewResource(next, action, groupID) {
+function encryptNewResource(next, action, groupID) {
   return IronWeb.document
     .encrypt(IronWeb.codec.utf8.toBytes(action.payload.body), {
       accessList: { groups: [{ id: groupID }] },
@@ -67,8 +67,9 @@ function decryptResource(next, action) {
  * resource data.
  */
 export const encryptionMiddleware = (store) => (next) => (action) => {
+
   if (action.type === "CREATE_RESOURCE") {
-    return encrpytNewResource(next, action, store.getState().group.id);
+    return encryptNewResource(next, action, store.getState().group.id);
   }
   next(action);
 };
