@@ -1,6 +1,6 @@
 import { createStore, applyMiddleware, compose} from 'redux';
 import ReduxThunk from "redux-thunk";
-import rootReducer from "../reducers";
+import rootReducer from "../reducers/index";
 import * as IronCoreMiddleware from "../middleware/IronCoreMiddleware";
 import apiMiddleware from "../middleware/ApiMiddleware";
 import logger from "redux-logger";
