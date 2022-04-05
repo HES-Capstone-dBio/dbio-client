@@ -5,6 +5,15 @@ const defaultState = {
 };
 
 const reducer = (state = defaultState, action) => {
+  if (action.type === "SET_GROUP") {
+    // Set initial details about group
+    return {
+      id: action.payload.groupID,
+      admins: action.payload.groupAdmins,
+      members: action.payload.groupMembers
+    };
+  }
+
   // Action for adding a new user to a group
   if (action.type === "ADD_USER_TO_GROUP") {
     // Add a new user ID to the list of group members
