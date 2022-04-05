@@ -3,7 +3,9 @@ import { combineReducers } from "redux";
 import group from "./GroupReducer";
 import resources from "./ResourcesReducer";
 
-export default combineReducers({
+const rootReducer = combineReducers({
   group,
   resources,
 });
+
+export default rootReducer;
