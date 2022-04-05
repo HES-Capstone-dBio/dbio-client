@@ -1,13 +1,19 @@
 import { createStore, applyMiddleware, compose} from 'redux';
 import ReduxThunk from "redux-thunk";
-import rootReducer from "../reducers/ResourcesReducer";
+import rootReducer from "../reducers";
 import * as IronCoreMiddleware from "../middleware/IronCoreMiddleware";
+import apiMiddleware from "../middleware/ApiMiddleware";
+import logger from "redux-logger";
 
 function getMiddleware() {
   const middleware = [ReduxThunk];
 
-  // Push the encrpytion and decryption middlewares
+  // Push logger middleware
+  middleware.push(logger);
+
+  // Push the encryption and decryption middlewares
   middleware.push(IronCoreMiddleware.encryptionMiddleware);
+  middleware.push(apiMiddleware);
   middleware.push(IronCoreMiddleware.decryptionMiddleware);
 
   return middleware;
@@ -15,7 +21,7 @@ function getMiddleware() {
 
 const configureStore = (preLoadedState) => {
 
-  const composeEnhancers = compose;
+  const composeEnhancers = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose;
 
   const store = createStore(rootReducer, composeEnhancers(applyMiddleware(...getMiddleware())));
   return store;
