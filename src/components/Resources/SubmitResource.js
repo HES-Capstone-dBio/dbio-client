@@ -1,14 +1,11 @@
-// @flow
 import { Form, Button, Container } from "react-bootstrap";
-import React, { useContext } from 'react';
+import React from 'react';
 import axios from 'axios';
-import AuthContext from '../../store/AuthContext';
 
 const SubmitResource = () => {
   const [resource, setResource] = React.useState(null);
   const [email, setEmail] = React.useState("test@test.com");
 
-  const ctx = useContext(AuthContext);
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -43,6 +40,7 @@ const SubmitResource = () => {
   const handleResource = e => {
     e.preventDefault();
     setResource(e.target.value);
+    console.log(resource)
     //@TODO add logic to use Ironcore to transform input and add to the request
   }
 
