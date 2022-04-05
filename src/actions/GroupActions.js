@@ -1,4 +1,5 @@
 import * as IronWeb from "@ironcorelabs/ironweb";
+import showSnackbar from "../components/UI/Snackbar/Snackbar";
 
 /**
  * Store details about the user's current group
@@ -6,7 +7,7 @@ import * as IronWeb from "@ironcorelabs/ironweb";
 export function setGroup(group) {
   return {
     type: "SET_GROUP",
-    payload: group
+    payload: group,
   };
 }
 
@@ -17,23 +18,23 @@ export function setGroup(group) {
 export function addUserToGroup(user, onSuccess, onFail) {
   return (dispatch, getState) => {
     IronWeb.group
-    .addMembers(getState().group.id, [user.id])
-    .then((addResult) => {
-      if(addResult.succeeded.length) {
-        dispatch({type: "ADD_USER_TO_GROUP", payload: user.id});
-        onSuccess();
-      }
-      else {
+      .addMembers(getState().group.id, [user.id])
+      .then((addResult) => {
+        if (addResult.succeeded.length) {
+          dispatch({ type: "ADD_USER_TO_GROUP", payload: user.id });
+          onSuccess();
+        } else {
+          onFail();
+          showSnackbar(
+            `Unable to give ${user.id} access. Make sure they are a dBio member.`,
+            "error"
+          );
+        }
+      })
+      .catch((error) => {
         onFail();
-        // @TODO Display error popup
-        console.log("Failed to add user to group");
-      }
-    })
-    .catch((error) => {
-      onFail();
-      // @TODO Display error popup
-      console('Failed to add user to group');
-    });
+        showSnackbar(error.message, "error");
+      });
   };
 }
 
@@ -43,21 +44,22 @@ export function addUserToGroup(user, onSuccess, onFail) {
 export function removeUserFromGroup(user, onSuccess, onFail) {
   return (dispatch, getState) => {
     IronWeb.group
-    .removeMembers(getState().group.id, [user.id])
-    .then((removeResult) => {
-      if (removeResult.succeeded.length) {
-        dispatch({type: "REMOVE_USER_FROM_GROUP", payload: user.id})
-        onSuccess();
-      } else {
+      .removeMembers(getState().group.id, [user.id])
+      .then((removeResult) => {
+        if (removeResult.succeeded.length) {
+          dispatch({ type: "REMOVE_USER_FROM_GROUP", payload: user.id });
+          onSuccess();
+        } else {
+          onFail();
+          showSnackbar(
+            `Unable to revoke access to ${user.id}. Please verify they are a dBio member`,
+            "error"
+          );
+        }
+      })
+      .catch((error) => {
         onFail();
-        // @TODO Show error popup
-        console.log("remove result failed");
-      }
-    })
-    .catch((error) => {
-      onFail();
-      // @TODO show error popup
-      console.log("Remove user from group failed");
-    });
+        showSnackbar(error.message, "error");
+      });
   };
 }
