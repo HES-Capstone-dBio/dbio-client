@@ -1,3 +1,4 @@
+import snackBar from "../components/UI/Snackbar/Snackbar";
 
 /**
  * Get a list of resources from protocol API
@@ -5,9 +6,10 @@
 export const listResources = () => {
   return new Promise((resolve) =>{
     try {
-      // @TODO fetch resources from protocol API here
+      // @TODO STORAGE fetch resources from protocol API here
+
     } catch (error) {
-      console.log('Error retrieving resource list')
+      snackBar("Error retrieving resource list", "error")
     }
   });
 };
@@ -18,9 +20,10 @@ export const listResources = () => {
 export const getResource = (resourceID) => {
   return new Promise((resolve, reject) => {
     try {
-      // @TODO fetch specific resource from protocol API here
+      // @TODO STORAGE fetch specific resource from protocol API here
+      
     } catch (error) {
-      console.log(`Error retrieving resource with ID ${resourceID}`);
+      snackBar(`Error retrieving resouce with ID ${resourceID}`, "error");
     }
   });
 };
@@ -29,7 +32,6 @@ export const getResource = (resourceID) => {
  * Create a new resource and add to storage
  */
 export const createResource = (resource) => {
-  console.log('in create resource api');
   return new Promise((resolve) => {
     const newResource = {
       ...resource,
@@ -39,7 +41,7 @@ export const createResource = (resource) => {
     if (!newResource.id) {
       newResource.id = Math.random().toString(36).slice(2);
     }
-    // @TODO At this point we add the new item to storage whether that be local
+    // @TODO STORAGE At this point we add the new item to storage whether that be local
     //       or a POST request to outside API.
 
     resolve(newResource);

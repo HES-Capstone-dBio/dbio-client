@@ -27,7 +27,6 @@ const reducer = (state = defaultState, action) => {
 
   // Action to create a new resource
   if (action.type === "CREATE_RESOURCE") {
-    console.log("creating new resource");
     // Add a new resource to state keyed by it's ID
     return {
       ...state,

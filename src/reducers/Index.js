@@ -5,5 +5,5 @@ import resources from "./ResourcesReducer";
 
 export default combineReducers({
   group,
-  resources
+  resources,
 });
