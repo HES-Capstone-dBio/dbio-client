@@ -34,7 +34,6 @@ const snackbar = (message, type = "success") => {
     const timeout = type === "error" ? 4000 : 2000;
     dismissSnackbar(previous, true);
     const snackbar = document.createElement("div");
-    console.log(`snackbar type is ${type}`);
     snackbar.className = `${classes.snackbar} ${classes[`snackbar-${type}`]}`;
     snackbar.setAttribute("role", "alert");
     //Adjust top position to account for the users scroll height
