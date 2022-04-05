@@ -2,7 +2,14 @@ import React, { useState, useEffect } from "react";
 import TorusSdk from "@toruslabs/customauth";
 import { verifierMap, GOOGLE } from "../constants/constants";
 import * as IronWeb from "@ironcorelabs/ironweb";
-import { initializeIroncoreUser } from "../ironcore/Initialization";
+import {
+  initializeIroncoreUser,
+  getTestGroupDetails,
+} from "../ironcore/Initialization";
+import showSnackBar from "../components/UI/Snackbar/Snackbar";
+import { setGroup } from "../actions/GroupActions";
+import { useDispatch } from "react-redux";
+import { GROUP_ID_STORAGE_KEY } from "../ironcore/Utils";
 
 export const AuthContext = React.createContext({
   isLoggedIn: false,
@@ -16,13 +23,13 @@ export const AuthContextProvider = (props) => {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [createResource, setCreateResource] = useState(false);
   const [torusDirectSdk, setTorusDirectSdk] = useState(null);
+  const dispatch = useDispatch();
 
   useEffect(() => {
     const storedUserLoggedInInformation = localStorage.getItem("isLoggedIn");
     if (storedUserLoggedInInformation === "1") {
       setIsLoggedIn(true);
     }
-
   }, []);
 
   useEffect(() => {
@@ -34,23 +41,39 @@ export const AuthContextProvider = (props) => {
           network: "testnet",
         });
         await torusSDK.init({ skipSw: false });
-        
+
         setTorusDirectSdk(torusSDK);
-      
       } catch (error) {
-        console.log("failed to initialize torus sdk");
+        showSnackBar("Failed to initialize torus SDK", "error");
       }
     })();
   }, []);
 
   const logoutHandler = () => {
-    localStorage.removeItem("isLoggedIn");
+    // Change all states to false
     setCreateResource(false);
     setIsLoggedIn(false);
+
+    // Remove user ID from storage
+    localStorage.removeItem("USER_ID");
+
+    // Remove group ID from storage
+    localStorage.removeItem(GROUP_ID_STORAGE_KEY);
+
+    // Clean up local storage
+    localStorage.removeItem("isLoggedIn");
+
+    try {
+      if (IronWeb.isInitialized) {
+        // Deauthorize IronCore SDK on logout
+        IronWeb.user.deauthorizeDevice();
+      }
+    } catch (error) {
+      console.log(`${error.message}`);
+    }
   };
 
   const loginHandler = async () => {
-
     try {
       const jwtParams = { domain: "https://dbio.us.auth0.com" };
       const { typeOfLogin, clientId, verifier } = verifierMap[GOOGLE];
@@ -72,21 +95,42 @@ export const AuthContextProvider = (props) => {
       // Initialize the ironcore SDK
       if (!IronWeb.isInitialized()) {
         try {
-          const ironcoreInitResult = await initializeIroncoreUser(idToken, privKey);
-          console.log(`Initialized SDK as user ${ironcoreInitResult.user.id}`)
-          // @TODO Implement correct error handling to bubble up to UI
-        } catch(error) {
+          const ironcoreInitResult = await initializeIroncoreUser(
+            idToken,
+            privKey
+          );
+
+          console.log(`Initialized SDK as user ${ironcoreInitResult.user.id}`);
+
+          console.log('user belongs to following groups');
+          console.log(await IronWeb.group.list());
+
+          // Store user ID in local storage. This will be used to create a unique
+          // test group for a user.
+          localStorage.setItem("USER_ID", ironcoreInitResult.user.id);
+
+          // Set the default group for the user (find this in Initialization.js)
+          const testGroupDetails = await getTestGroupDetails();
+
+          dispatch(setGroup(testGroupDetails));
+
+        } catch (error) {
           if (error.code === IronWeb.ErrorCodes.USER_PASSCODE_INCORRECT) {
-            console.log('Unable to initialize Ironcore: Incorrect user password');
-          } else if (error.code === IronWeb.ErrorCodes.USER_VERIFY_API_REQUEST_FAILURE) {
-            console.log('Unable to initialize Ironcore: Invalid JWT');
+            showSnackBar(
+              "Unable to initialize Ironcore SDK: Incorrect user passcode",
+              "error"
+            );
+          } else if (
+            error.code === IronWeb.ErrorCodes.USER_VERIFY_API_REQUEST_FAILURE
+          ) {
+            showSnackBar("Unable to initialize Ironcore: Invalid JWT", "error");
           } else {
-            console.log(`error code is ${error.code.toString()}`);
+            showSnackBar(`${error.message}`, "error");
           }
         }
       }
     } catch (error) {
-      console.error(error, "login caught");
+      showSnackBar("Unable to log in to dBio");
     }
 
     localStorage.setItem("isLoggedIn", "1");
@@ -94,14 +138,13 @@ export const AuthContextProvider = (props) => {
   };
 
   const createResourceHandler = () => {
-
     setCreateResource(true);
   };
 
   /**
    * The homeHandler should set the state of all other visual-component
    * states to false, thus rendering the home page in App.js. For the time
-   * being the only other component state we need to manage is the 
+   * being the only other component state we need to manage is the
    * createResource state.
    */
   const homeHandler = () => {
