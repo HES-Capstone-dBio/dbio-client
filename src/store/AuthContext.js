@@ -144,10 +144,10 @@ export const AuthContextProvider = (props) => {
           )}`
         )
         .catch((error) => {
-          // If we receive a 500 error it means that this user isn't
+          // If we receive a 404 error it means that this user isn't
           // currently registered with dBio thus we need to make a
           // post request to add them
-          if (error.response.status === 500) {
+          if (error.response.status === 404) {
             axios
               .post(`${BACKEND_ENDPOINT}/dbio/users`, {
                 eth_public_address: localStorage.getItem("ETH_ADDR"),
