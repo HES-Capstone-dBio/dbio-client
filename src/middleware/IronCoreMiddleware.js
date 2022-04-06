@@ -8,6 +8,7 @@ import showSnackbar from "../components/UI/Snackbar/Snackbar";
 function encryptNewResource(next, action, groupID) {
   return IronWeb.document
     .encrypt(IronWeb.codec.utf8.toBytes(action.payload.body), {
+      documentName: action.payload.title,
       accessList: { groups: [{ id: groupID }] },
     })
     .then((encryptedDoc) => {
@@ -22,7 +23,7 @@ function encryptNewResource(next, action, groupID) {
       });
     })
     .catch((error) => {
-      showSnackbar(`Error encrypting document: ${error.message}`, "error")
+      showSnackbar(`Error encrypting document: ${error.message}`, "error");
       if (action.onFail) {
         action.onFail();
       }
@@ -50,7 +51,7 @@ function decryptResource(next, action) {
     })
     .catch((error) => {
       if (error.code === IronWeb.ErrorCodes.DOCUMENT_GET_REQUEST_FAILURE) {
-        showSnackbar("Order cannot be decrypted by this user!", "error")
+        showSnackbar("Order cannot be decrypted by this user!", "error");
       } else {
         showSnackbar(`Error decrypting document: ${error.message}`, "error");
       }
@@ -67,7 +68,6 @@ function decryptResource(next, action) {
  * resource data.
  */
 export const encryptionMiddleware = (store) => (next) => (action) => {
-
   if (action.type === "CREATE_RESOURCE") {
     return encryptNewResource(next, action, store.getState().group.id);
   }

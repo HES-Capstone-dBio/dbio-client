@@ -5,3 +5,11 @@
   margin: 2rem auto;
   text-align: center;
 }
+
+.resource-list {
+  width: 90%;
+  max-width: 60rem;
+  padding: 3rem;
+  margin: 2rem auto;
+  text-align: center;
+}
