@@ -2,6 +2,7 @@ export const GOOGLE = "google";
 
 export const AUTH_DOMAIN = "https://torus-test.auth0.com";
 export const COGNITO_AUTH_DOMAIN = "https://torus-test.auth.ap-southeast-1.amazoncognito.com/oauth2/";
+export const BACKEND_ENDPOINT = "http://localhost:8080";
 
 export const verifierMap = {
   [GOOGLE]: {

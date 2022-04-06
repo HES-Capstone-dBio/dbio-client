@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import TorusSdk from "@toruslabs/customauth";
-import { verifierMap, GOOGLE } from "../constants/constants";
+import { verifierMap, GOOGLE, BACKEND_ENDPOINT } from "../constants/constants";
 import * as IronWeb from "@ironcorelabs/ironweb";
 import {
   initializeIroncoreUser,
@@ -12,8 +12,6 @@ import { setGroup } from "../actions/GroupActions";
 import { useDispatch } from "react-redux";
 import { GROUP_ID_STORAGE_KEY } from "../ironcore/Utils";
 import snackbar from "../components/UI/Snackbar/Snackbar";
-
-const BACKEND_ENDPOINT = "http://localhost:8080";
 
 export const AuthContext = React.createContext({
   isLoggedIn: false,
