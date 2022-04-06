@@ -1,4 +1,4 @@
-import { Form, Button, Container } from "react-bootstrap";
+import { Form, Button, Container, Spinner } from "react-bootstrap";
 import React, { useState, useEffect } from "react";
 import { useDispatch } from "react-redux";
 import { createResource } from "../../actions/ResourceActions";
@@ -11,7 +11,10 @@ const SubmitResource = () => {
   });
   const dispatch = useDispatch();
 
-  useEffect(() => {}, [newResource.savingResource]);
+  useEffect(() => {
+    if (newResource.savingResource) {
+    }
+  }, [newResource.savingResource]);
 
   const resourceTextHandler = (event) => {
     setNewResource({ resourceBody: event.target.value });
@@ -57,7 +60,16 @@ const SubmitResource = () => {
             value={newResource.resourceBody}
           />
         </Form.Group>
-        <Button variant="primary" type="submit" style={{ paddingBottom: 28 }}>
+        <Button variant="primary" type="submit">
+          {newResource.savingResource && (
+            <Spinner
+              as="span"
+              animation="border"
+              size="sm"
+              role="status"
+              aria-hidden="true"
+            ></Spinner>
+          )}
           Store Record
         </Button>
       </Form>
