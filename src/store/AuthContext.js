@@ -7,10 +7,13 @@ import {
   getTestGroupDetails,
 } from "../ironcore/Initialization";
 import showSnackBar from "../components/UI/Snackbar/Snackbar";
+import axios from "axios";
 import { setGroup } from "../actions/GroupActions";
 import { useDispatch } from "react-redux";
 import { GROUP_ID_STORAGE_KEY } from "../ironcore/Utils";
 import snackbar from "../components/UI/Snackbar/Snackbar";
+
+const BACKEND_ENDPOINT = "http://localhost:8080";
 
 export const AuthContext = React.createContext({
   isLoggedIn: false,
@@ -116,7 +119,6 @@ export const AuthContextProvider = (props) => {
           const testGroupDetails = await getTestGroupDetails();
 
           dispatch(setGroup(testGroupDetails));
-
         } catch (error) {
           if (error.code === IronWeb.ErrorCodes.USER_PASSCODE_INCORRECT) {
             showSnackBar(
@@ -132,6 +134,35 @@ export const AuthContextProvider = (props) => {
           }
         }
       }
+
+      // At this point the user is logged in via TORUS and IronCore SDK is initialized.
+      // Now we need to check if the user exists in the backend.
+      axios
+        .get(
+          `${BACKEND_ENDPOINT}/dbio/users/email/${localStorage.getItem(
+            "USER_ID"
+          )}`
+        )
+        .catch((error) => {
+          // If we receive a 404 error it means that this user isn't
+          // currently registered with dBio thus we need to make a
+          // post request to add them
+          if (error.response.status === 404) {
+            axios
+              .post(`${BACKEND_ENDPOINT}/dbio/users`, {
+                eth_public_address: localStorage.getItem("ETH_ADDR"),
+                email: localStorage.getItem("USER_ID"),
+              })
+              .then(
+                (response) => {
+                  showSnackBar("Thank you for registering with dBio", "success");
+                },
+                (error) => {
+                  console.log(error);
+                }
+              );
+          }
+        });
     } catch (error) {
       showSnackBar("Unable to log in to dBio");
     }
