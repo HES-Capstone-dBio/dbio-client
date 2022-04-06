@@ -10,6 +10,7 @@ import showSnackBar from "../components/UI/Snackbar/Snackbar";
 import { setGroup } from "../actions/GroupActions";
 import { useDispatch } from "react-redux";
 import { GROUP_ID_STORAGE_KEY } from "../ironcore/Utils";
+import snackbar from "../components/UI/Snackbar/Snackbar";
 
 export const AuthContext = React.createContext({
   isLoggedIn: false,
@@ -72,7 +73,7 @@ export const AuthContextProvider = (props) => {
         IronWeb.user.deauthorizeDevice();
       }
     } catch (error) {
-      console.log(`${error.message}`);
+      snackbar("Unable to initialize IronCore SDK", "error");
     }
   };
 
@@ -102,11 +103,6 @@ export const AuthContextProvider = (props) => {
             idToken,
             privKey
           );
-
-          console.log(`Initialized SDK as user ${ironcoreInitResult.user.id}`);
-
-          console.log('user belongs to following groups');
-          console.log(await IronWeb.group.list());
 
           // Store user ID in local storage. This will be used to create a unique
           // test group for a user.
