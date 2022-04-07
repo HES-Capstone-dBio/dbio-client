@@ -16,9 +16,9 @@ const Home = (props) => {
       {ctx.createResource && <SubmitResource/>}
       {!ctx.createResource && <ViewRecordsRequest/>}
     </Card>
-    <Card className={classes["resource-list"]}>
+    <div className={classes["resource-list"]}>
       {ctx.createResource && <ResourceList/>}
-    </Card>
+    </div>
     </React.Fragment>
   );
 };

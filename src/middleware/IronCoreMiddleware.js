@@ -81,16 +81,8 @@ export const encryptionMiddleware = (store) => (next) => (action) => {
  */
 export const decryptionMiddleware = (state) => (next) => (action) => {
   if (action.type === "GET_RESOURCE") {
-    // When a user requests a resource we must conditionally decrypt the data
-    // if that data is encrypted. If this resource was created prior to encryption
-    // then we just want to pass it along. Otherwise, we want to decrypt it and pass
-    // along an action with the decrypted data.
-    if (action.payload.encrypted) {
       // Decrypt the data and modify the action content with the decrypted content before dispatching
       return decryptResource(next, action);
-    }
-    // Per above comment this is the case where data hasn't been encrypted yet
-    return next(action);
   }
   next(action);
 };
