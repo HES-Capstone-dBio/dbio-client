@@ -11,7 +11,6 @@ import axios from "axios";
 import { setGroup } from "../actions/GroupActions";
 import { useDispatch } from "react-redux";
 import { GROUP_ID_STORAGE_KEY } from "../ironcore/Utils";
-import snackbar from "../components/UI/Snackbar/Snackbar";
 
 export const AuthContext = React.createContext({
   isLoggedIn: false,
@@ -74,7 +73,7 @@ export const AuthContextProvider = (props) => {
         IronWeb.user.deauthorizeDevice();
       }
     } catch (error) {
-      snackbar("Unable to initialize IronCore SDK", "error");
+      console.log("Unable to initialize IronCore SDK");
     }
   };
 
