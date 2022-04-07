@@ -184,13 +184,13 @@ const ViewRecordsRequest = () => {
           </Form.Group>
         </Form>
 
-        <hr />
+        {/* <hr />
         <h3>View Requests for your Records</h3>
         <h6>
           View, authorize, and reject 3rd party access requests for your medical
           records
         </h6>
-        <ViewRecordsRequestAccordion />
+        <ViewRecordsRequestAccordion /> */}
       </Container>
     </div>
   );
