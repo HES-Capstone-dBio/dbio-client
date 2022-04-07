@@ -1,4 +1,6 @@
 import snackBar from "../components/UI/Snackbar/Snackbar";
+import axios from "axios";
+import { BACKEND_ENDPOINT } from "../constants/constants";
 
 /**
  * Get a list of resources from protocol API
@@ -41,8 +43,25 @@ export const createResource = (resource) => {
     if (!newResource.id) {
       newResource.id = Math.random().toString(36).slice(2);
     }
-    // @TODO STORAGE At this point we add the new item to storage whether that be local
-    //       or a POST request to outside API.
+
+    // Post the ciphertext to the protocol backend
+    // @TODO the resource_type is temporary
+    // @TODO Come up with better error handling schema here.
+    axios.post(`${BACKEND_ENDPOINT}/dbio/resources`, {
+      email: localStorage.getItem("USER_ID"),
+      creator_eth_address: localStorage.getItem("ETH_ADDR"),
+      resource_type: 'Patient',
+      resource_id: parseInt(newResource.id),
+      ciphertext: newResource.body
+    })
+    .then(
+      (response) => {
+        console.log("Successfully posted a new resource to protocol backend");
+      },
+      (error) => {
+        console.log(error);
+      }
+    );
 
     resolve(newResource);
   });
