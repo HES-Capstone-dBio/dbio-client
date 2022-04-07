@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
-    "@emotion/css": "^11.7.1",
+    "@emotion/css": "^11.9.0",
     "@emotion/react": "^11.8.2",
     "@ironcorelabs/ironweb": "^3.4.1",
     "@testing-library/jest-dom": "^5.16.2",
