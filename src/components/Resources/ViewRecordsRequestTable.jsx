@@ -22,20 +22,20 @@ const ViewRecordsRequestTable = ({props}) => {
           <td>ID0001</td>
           <td>Requesting access to my family member's medical data</td>
           <td>
-            <Button variant="success" style={{paddingBottom:30}}>Accept</Button>{' '}
+            <Button variant="success" className="mb-2">Accept</Button>{' '}
           </td>
           <td>            
-            <Button variant="warning" style={{paddingBottom:30}}>Reject</Button>{' '}
+            <Button variant="warning" className="mb-2">Reject</Button>{' '}
           </td>
         </tr>
         <tr>
           <td>ID0002</td>
           <td>Requesting access for your doctor's appointment at UW hospital</td>
           <td>
-            <Button variant="success" style={{paddingBottom:30}} >Accept</Button>{' '}
+            <Button variant="success" className="mb-2">Accept</Button>{' '}
           </td>
           <td>            
-            <Button variant="warning" style={{paddingBottom:30}} >Reject</Button>{' '}
+            <Button variant="warning" className="mb-2">Reject</Button>{' '}
           </td>
         </tr>
       </tbody>
@@ -57,7 +57,7 @@ const ViewRecordsRequestTable = ({props}) => {
         <td>ID0001</td>
         <td>Requesting access to my family member's medical data</td>
         <td>
-        <Button variant="primary" style={{paddingBottom:30}} >Modify</Button>{' '}
+        <Button variant="primary" className="mb-2">Modify</Button>{' '}
         </td>
 
       </tr>
@@ -65,7 +65,7 @@ const ViewRecordsRequestTable = ({props}) => {
         <td>ID0002</td>
         <td>Requesting access for your doctor's appointment at UW hospital</td>
         <td>
-          <Button variant="primary" style={{paddingBottom:30}} >Modify</Button>{' '}
+          <Button variant="primary" className="mb-2">Modify</Button>{' '}
         </td>
       </tr>
     </tbody>
