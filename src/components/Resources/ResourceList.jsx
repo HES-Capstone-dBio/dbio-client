@@ -1,18 +1,21 @@
 import React, { useState, useEffect } from "react";
 import { listResources, getResource } from "../../actions/ResourceActions";
-import { Spinner } from "react-bootstrap";
 import { useSelector, useDispatch } from "react-redux";
 import classes from "./ResourceList.module.css";
-import Paper from "../UI/Paper/Paper";
+import Accordion from "@mui/material/Accordion";
+import AccordionDetails from "@mui/material/AccordionDetails";
+import AccordionSummary from "@mui/material/AccordionSummary";
+import Typography from "@mui/material/Typography";
+import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 
 const ResourceList = () => {
   const resources = useSelector((state) => state.resources);
-  const [expandedRow, setExpandedRow] = useState("");
+  const [expanded, setExpanded] = useState(null);
   const [loadingRow, setLoadingRow] = useState(false);
 
   const dispatch = useDispatch();
 
-  // // On initial page load get all resources that belong to this user
+  // On initial page load get all resources that belong to this user
   useEffect(() => {
     dispatch(
       listResources(
@@ -23,39 +26,37 @@ const ResourceList = () => {
   }, [dispatch]);
 
   useEffect(() => {
-    if (expandedRow && typeof resources[expandedRow].body === "string") {
+    if (expanded && typeof resources[expanded].body === "string") {
       setLoadingRow(null);
     }
-  }, [expandedRow, resources]);
+  }, [expanded, resources]);
 
   /**
    * Conditionally return the resource body content depending on whether
    * the data needs to be loaded
    */
   const getResourceBody = (resource) => {
-    if (expandedRow === null || expandedRow !== resource.id) {
+    if (expanded === false || expanded !== resource.id) {
       return null;
     }
-    return <div className={classes["resource-body"]}>
-      {loadingRow ? <Spinner animation="border" /> : resource.body}
-    </div>
-  }
+    return <React.Fragment>{loadingRow ? "" : resource.body}</React.Fragment>;
+  };
 
-  const expandRow = (resourceID) => {
-    // If the user is collapsing this resource then clear out the expandRow state
-    if (expandedRow === resourceID) {
-      return setExpandedRow(null);
+  const handleChange = (resourceID) => (event, isExpanded) => {
+    // If user is collapsing this resource then clear out the expanded state
+    if (expanded === resourceID) {
+      return setExpanded(null);
     }
     // If the data has already been loaded then display it
     if (typeof resources[resourceID].body === "string") {
-      return setExpandedRow(resourceID);
+      return setExpanded(resourceID);
     }
     // Otherwise set a loading indicator
-    setExpandedRow(resourceID);
+    setExpanded(resourceID);
     setLoadingRow(true);
     dispatch(
       getResource(resourceID, () => {
-        setExpandedRow(null);
+        setExpanded(null);
         setLoadingRow(false);
       })
     );
@@ -69,19 +70,34 @@ const ResourceList = () => {
     const resourcesArray = Object.keys(resources)
       .map((resourceID) => resources[resourceID])
       .sort((a, b) => a.created > b.created)
-      .slice().reverse().slice(0, 2);
+      .slice()
+      .reverse();
     if (resourcesArray.length === 0) {
       return <h2>You currently have no records to display</h2>;
     }
     return resourcesArray.map((resource) => {
       return (
-        <div key={resource.id} className={classes["resource-row"]} onClick={() => expandRow(resource.id)}>
-          <div className={classes["resource-header"]}>
-            <div className={classes["resource-title"]}>{resource.title}</div>
-            <div className={classes.timestamp}>{new Date(resource.created).toLocaleTimeString()}</div>
-          </div>
-          {getResourceBody(resource)}
-        </div>
+        <Accordion
+          key={resource.id}
+          expanded={expanded === resource.id}
+          onChange={handleChange(resource.id)}
+        >
+          <AccordionSummary
+            expandIcon={<ExpandMoreIcon />}
+            aria-controls={`${resource.id}bh-content`}
+            id={`${resource.id}bh-header`}
+          >
+            <Typography sx={{ width: "23%", flexShrink: 0 }}>
+              {new Date(resource.created).toLocaleTimeString()}
+            </Typography>
+            <Typography sx={{ color: "text.secondary" }}>
+              {resource.title}
+            </Typography>
+          </AccordionSummary>
+          <AccordionDetails>
+            <Typography>{getResourceBody(resource)}</Typography>
+          </AccordionDetails>
+        </Accordion>
       );
     });
   };
@@ -89,7 +105,7 @@ const ResourceList = () => {
   return (
     <React.Fragment>
       <h3 className={classes["header-text"]}>Decrypt a resource:</h3>
-      <Paper className={classes.paper}>{getGroupResources()}</Paper>
+      {getGroupResources()}
     </React.Fragment>
   );
 };

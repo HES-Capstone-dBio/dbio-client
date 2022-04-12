@@ -45,6 +45,8 @@ function decryptResource(next, action) {
         ...action,
         payload: {
           ...action.payload,
+          title: decryptedDoc.documentName,
+          created: decryptedDoc.created,
           body: IronWeb.codec.utf8.fromBytes(decryptedDoc.data),
         },
       });
