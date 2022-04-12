@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { listResources, getResource } from "../../actions/ResourceActions";
 import { useSelector, useDispatch } from "react-redux";
-import classes from "./ResourceList.module.css";
 import Accordion from "@mui/material/Accordion";
 import AccordionDetails from "@mui/material/AccordionDetails";
 import AccordionSummary from "@mui/material/AccordionSummary";
@@ -104,7 +103,7 @@ const ResourceList = () => {
 
   return (
     <React.Fragment>
-      <h3 className={classes["header-text"]}>Decrypt a resource:</h3>
+      <h3>Decrypt a resource:</h3>
       {getGroupResources()}
     </React.Fragment>
   );
