@@ -71,8 +71,7 @@ const ResourceList = () => {
       .map((resourceID) => resources[resourceID])
       .sort((a, b) => a.created > b.created)
       .slice()
-      .reverse()
-      .slice(0, 2);
+      .reverse();
     if (resourcesArray.length === 0) {
       return <h2>You currently have no records to display</h2>;
     }
