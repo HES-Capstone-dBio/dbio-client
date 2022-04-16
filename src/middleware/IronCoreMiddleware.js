@@ -1,4 +1,5 @@
 import * as IronWeb from "@ironcorelabs/ironweb";
+import { resourceActions } from "../store/ResourceSlice";
 import showSnackbar from "../components/UI/Snackbar/Snackbar";
 
 /**
@@ -15,10 +16,9 @@ function encryptNewResource(next, action, groupID) {
       next({
         ...action,
         payload: {
-          ...action.payload,
-          body: IronWeb.codec.base64.fromBytes(encryptedDoc.document),
-          id: encryptedDoc.documentID,
-          encrypted: true,
+          resourceTitle: encryptedDoc.documentName,
+          ciphertext: IronWeb.codec.base64.fromBytes(encryptedDoc.document),
+          ironcoreDocumentId: encryptedDoc.documentID,
         },
       });
     })
@@ -37,8 +37,8 @@ function encryptNewResource(next, action, groupID) {
 function decryptResource(next, action) {
   IronWeb.document
     .decrypt(
-      action.payload.id,
-      IronWeb.codec.base64.toBytes(action.payload.body)
+      action.payload.ironcore_document_id,
+      IronWeb.codec.base64.toBytes(action.payload.ciphertext)
     )
     .then((decryptedDoc) => {
       next({
@@ -70,7 +70,7 @@ function decryptResource(next, action) {
  * resource data.
  */
 export const encryptionMiddleware = (store) => (next) => (action) => {
-  if (action.type === "CREATE_RESOURCE") {
+  if (resourceActions.create.match(action)) {
     return encryptNewResource(next, action, store.getState().group.id);
   }
   next(action);
@@ -82,9 +82,12 @@ export const encryptionMiddleware = (store) => (next) => (action) => {
  * resource data from the dBio protocol API.
  */
 export const decryptionMiddleware = (state) => (next) => (action) => {
-  if (action.type === "GET_RESOURCE") {
+  if (resourceActions.get.match(action)) {
       // Decrypt the data and modify the action content with the decrypted content before dispatching
       return decryptResource(next, action);
   }
   next(action);
 };
+
+
+
