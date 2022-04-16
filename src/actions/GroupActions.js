@@ -2,17 +2,17 @@ import * as IronWeb from "@ironcorelabs/ironweb";
 import showSnackbar from "../components/UI/Snackbar/Snackbar";
 
 /**
- * Store details about the user's current group
+ * Action creator to set the user's current group.
  */
 export function setGroup(group) {
   return {
-    type: "SET_GROUP",
-    payload: group,
+    type: "group/setGroup",
+    payload: group
   };
-}
+};
 
 /**
- * Add user to group with specific ID. user.id is the email
+ * Thunk action creator to add user to group with specific ID. user.id is the email
  * of the user you wish to add to group.
  */
 export function addUserToGroup(user, onSuccess, onFail) {
@@ -21,7 +21,7 @@ export function addUserToGroup(user, onSuccess, onFail) {
       .addMembers(getState().group.id, [user.id])
       .then((addResult) => {
         if (addResult.succeeded.length) {
-          dispatch({ type: "ADD_USER_TO_GROUP", payload: user.id });
+          dispatch({type: "group/addUser", payload: user.id});
           onSuccess();
         } else {
           onFail();
@@ -39,7 +39,7 @@ export function addUserToGroup(user, onSuccess, onFail) {
 }
 
 /**
- * Remove a user from a group
+ * Thunk action creator to remove a user from a group.
  */
 export function removeUserFromGroup(user, onSuccess, onFail) {
   return (dispatch, getState) => {
@@ -47,7 +47,7 @@ export function removeUserFromGroup(user, onSuccess, onFail) {
       .removeMembers(getState().group.id, [user.id])
       .then((removeResult) => {
         if (removeResult.succeeded.length) {
-          dispatch({ type: "REMOVE_USER_FROM_GROUP", payload: user.id });
+          dispatch({type: "group/removeUser", payload: user.id});
           onSuccess();
         } else {
           onFail();
@@ -63,3 +63,4 @@ export function removeUserFromGroup(user, onSuccess, onFail) {
       });
   };
 }
+
