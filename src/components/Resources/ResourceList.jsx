@@ -7,8 +7,13 @@ import AccordionSummary from "@mui/material/AccordionSummary";
 import Typography from "@mui/material/Typography";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 
+// Do not reinitiliaze when component renders again. Used
+// as a flag for component's first render.
+let isInitial = true;
+
 const ResourceList = () => {
-  const resources = useSelector((state) => state.resources);
+  const resources = useSelector((state) => state.resources.resources);
+  const resourcesChanged = useSelector((state) => state.resources.changed);
   const [expanded, setExpanded] = useState(null);
   const [loadingRow, setLoadingRow] = useState(false);
 
@@ -23,6 +28,23 @@ const ResourceList = () => {
       )
     );
   }, [dispatch]);
+
+  useEffect(() => {
+    if (isInitial) {
+      isInitial = false;
+      return;
+    }
+
+    if (resourcesChanged) {
+      dispatch(
+        listResources(
+          () => {
+          },
+          () => {}
+        )
+      );
+    }
+  }, [resources, dispatch, resourcesChanged]);
 
   useEffect(() => {
     if (expanded && typeof resources[expanded].body === "string") {
@@ -64,7 +86,6 @@ const ResourceList = () => {
   /**
    * Get a list of resources and display them as individual accordion items.
    */
-  // @TODO This array slicing and reversing is a temporary fix.
   const getGroupResources = () => {
     const resourcesArray = Object.keys(resources)
       .map((resourceID) => resources[resourceID])
@@ -87,7 +108,7 @@ const ResourceList = () => {
             id={`${resource.id}bh-header`}
           >
             <Typography sx={{ width: "23%", flexShrink: 0 }}>
-              {new Date(resource.created).toLocaleTimeString()}
+              {new Date(resource.created).toLocaleString()}
             </Typography>
             <Typography sx={{ color: "text.secondary" }}>
               {resource.title}
