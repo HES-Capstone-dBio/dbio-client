@@ -1,10 +1,9 @@
 import * as Api from "../ironcore/Api";
-import { resourceActions } from "../store/ResourceSlice";
 
 /**
  * Thunk action creator to get all resources available to user.
  */
- export const listResources = (onSuccess, onFail) => {
+export const listResources = (onSuccess, onFail) => {
   return {
     type: "resource/list",
     payload: [],
@@ -41,5 +40,3 @@ export const createResource = (title, body, onSuccess, onFail) => {
     onFail,
   };
 };
-
-export default resourceActions;
