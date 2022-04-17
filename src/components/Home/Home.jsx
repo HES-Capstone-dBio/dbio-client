@@ -1,24 +1,21 @@
-import React, { useContext } from 'react';
+import React from "react";
 
-import Card from '../UI/Card/Card';
-import classes from './Home.module.css';
-import AuthContext from '../../store/AuthContext';
-import SubmitResource from '../Resources/SubmitResource';
-import ViewRecordsRequest from '../Resources/ViewRecordsRequest';
-import ResourceList from '../Resources/ResourceList';
+import Card from "../UI/Card/Card";
+import classes from "./Home.module.css";
+import SubmitResource from "../Resources/SubmitResource";
+import ViewRecordsRequest from "../Resources/ViewRecordsRequest";
+import ResourceList from "../Resources/ResourceList";
 
 const Home = (props) => {
-  const ctx = useContext(AuthContext);
-
   return (
     <React.Fragment>
-    <Card className={classes.home}>
-      {ctx.createResource && <SubmitResource/>}
-      {!ctx.createResource && <ViewRecordsRequest/>}
-    </Card>
-    <div className={classes["resource-list"]}>
-      {ctx.createResource && <ResourceList/>}
-    </div>
+      <Card className={classes.home}>
+        <SubmitResource />
+        <ViewRecordsRequest />
+      </Card>
+      <div className={classes["resource-list"]}>
+        <ResourceList />
+      </div>
     </React.Fragment>
   );
 };

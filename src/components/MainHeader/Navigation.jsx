@@ -1,30 +1,29 @@
-import React, { useContext } from "react";
-
+import React from "react";
+import { useDispatch } from "react-redux";
 import classes from "./Navigation.module.css";
-import AuthContext from "../../store/AuthContext";
+import { logoutUser } from "../../actions/UserActions";
 
 const Navigation = () => {
+  const dispatch = useDispatch();
 
-  const ctx = useContext(AuthContext);
+  const logoutButtonHandler = (event) => {
+    dispatch(logoutUser());
+  };
 
   return (
     <nav className={classes.nav}>
       <ul>
-        {ctx.isLoggedIn && (
-          <li>
-            <button onClick={ctx.homeHandler}>Home</button>
-          </li>
-        )}
-        {ctx.isLoggedIn && (
-          <li>
-            <button onClick={ctx.createResourceHandler}>Create Resource</button>
-          </li>
-        )}
-        {ctx.isLoggedIn && (
-          <li>
-            <button onClick={ctx.onLogout}>Logout</button>
-          </li>
-        )}
+        <li>
+          <button>Home</button>
+        </li>
+
+        <li>
+          <button>Create Resource</button>
+        </li>
+
+        <li>
+          <button onClick={logoutButtonHandler}>Logout</button>
+        </li>
       </ul>
     </nav>
   );
