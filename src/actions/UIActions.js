@@ -33,9 +33,11 @@ export const deauthIroncoreSDK = createAsyncThunk(
     if (IronWeb.isInitialized) {
       try {
         await IronWeb.user.deauthorizeDevice();
-      } catch(e) {
+      } catch (e) {
         console.log(e.message);
-        return thunkAPI.rejectWithValue("Unable to deauthorize device from IronCore SDK.")
+        return thunkAPI.rejectWithValue(
+          "Unable to deauthorize device from IronCore SDK."
+        );
       }
     }
     return { ironcoreInitialied: false };
