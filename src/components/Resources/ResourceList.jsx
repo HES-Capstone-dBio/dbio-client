@@ -1,10 +1,12 @@
 import React, { useState, useEffect } from "react";
 import { listResources, getResource } from "../../actions/ResourceActions";
 import { useSelector, useDispatch } from "react-redux";
-import Accordion from "@mui/material/Accordion";
-import AccordionDetails from "@mui/material/AccordionDetails";
-import AccordionSummary from "@mui/material/AccordionSummary";
-import Typography from "@mui/material/Typography";
+import {
+  Accordion,
+  AccordionDetails,
+  AccordionSummary,
+  Typography,
+} from "@mui/material";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 
 // Do not reinitiliaze when component renders again. Used
@@ -38,8 +40,7 @@ const ResourceList = () => {
     if (resourcesChanged) {
       dispatch(
         listResources(
-          () => {
-          },
+          () => {},
           () => {}
         )
       );
