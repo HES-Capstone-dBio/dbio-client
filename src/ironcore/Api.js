@@ -12,8 +12,9 @@ export const listResources = async () => {
       `${BACKEND_ENDPOINT}/dbio/resources/${localStorage.getItem("ETH_ADDR")}`
     );
     return response.data;
-  } catch (error) {
+  } catch (e) {
     snackbar("Error retrieving resources from database,", "error");
+    throw new Error("Failed to retrieve resource list.");
   }
 };
 
@@ -28,11 +29,11 @@ export const getResource = async (resourceID) => {
       )}/${resourceID}`
     );
 
-    (await response).data.id = resourceID;
+    response.data.id = resourceID;
     return response.data;
-  } catch (error) {
+  } catch (e) {
     snackBar(`Error retrieving resouce with ID ${resourceID}`, "error");
-    throw new Error("Failed to get resource");
+    throw new Error("Failed to get resource.");
   }
 };
 
@@ -57,7 +58,7 @@ export const createResource = async (resource) => {
 
   try {
     await axios.post(`${BACKEND_ENDPOINT}/dbio/resources`, {
-      email: localStorage.getItem("USER_ID"),
+      email: localStorage.getItem("USER_EMAIL"),
       creator_eth_address: localStorage.getItem("ETH_ADDR"),
       resource_title: newResource.resourceTitle,
       resource_type: newResource.resourceType,
@@ -65,7 +66,7 @@ export const createResource = async (resource) => {
       ironcore_document_id: newResource.ironcoreDocumentId,
       ciphertext: newResource.ciphertext,
     });
-  } catch (error) {
+  } catch (e) {
     snackBar(`Failed to create resource`, "error");
     throw new Error("Failed to create resource");
   }

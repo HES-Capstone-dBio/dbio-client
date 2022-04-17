@@ -22,8 +22,8 @@ function encryptNewResource(next, action, groupID) {
         },
       });
     })
-    .catch((error) => {
-      showSnackbar(`Error encrypting document: ${error.message}`, "error");
+    .catch((e) => {
+      showSnackbar(`Error encrypting document: ${e.message}`, "error");
       if (action.onFail) {
         action.onFail();
       }
@@ -51,11 +51,11 @@ function decryptResource(next, action) {
         },
       });
     })
-    .catch((error) => {
-      if (error.code === IronWeb.ErrorCodes.DOCUMENT_GET_REQUEST_FAILURE) {
+    .catch((e) => {
+      if (e.code === IronWeb.ErrorCodes.DOCUMENT_GET_REQUEST_FAILURE) {
         showSnackbar("Order cannot be decrypted by this user!", "error");
       } else {
-        showSnackbar(`Error decrypting document: ${error.message}`, "error");
+        showSnackbar(`Error decrypting document: ${e.message}`, "error");
       }
       if (action.onFail) {
         action.onFail();
@@ -83,11 +83,8 @@ export const encryptionMiddleware = (store) => (next) => (action) => {
  */
 export const decryptionMiddleware = (state) => (next) => (action) => {
   if (resourceActions.get.match(action)) {
-      // Decrypt the data and modify the action content with the decrypted content before dispatching
-      return decryptResource(next, action);
+    // Decrypt the data and modify the action content with the decrypted content before dispatching
+    return decryptResource(next, action);
   }
   next(action);
 };
-
-
-
