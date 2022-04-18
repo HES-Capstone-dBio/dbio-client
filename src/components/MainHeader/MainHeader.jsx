@@ -1,13 +1,17 @@
-import React from 'react';
+import React from "react";
+import { useSelector } from "react-redux";
+import Navigation from "./Navigation";
+import { userSelector } from "../../store/UserSlice";
 
-import Navigation from './Navigation';
-import classes from './MainHeader.module.css';
+import classes from "./MainHeader.module.css";
 
 const MainHeader = (props) => {
+  const { isLoggedIn } = useSelector(userSelector);
+
   return (
-    <header className={classes['main-header']}>
+    <header className={classes["main-header"]}>
       <h1>dBio</h1>
-      <Navigation onLogout={props.onLogout} />
+      {isLoggedIn && <Navigation onLogout={props.onLogout} />}
     </header>
   );
 };

@@ -1,16 +1,24 @@
-import React, { useContext } from "react";
-
+import React, { useEffect } from "react";
+import { useDispatch } from "react-redux";
 import Card from "../UI/Card/Card";
 import classes from "./Login.module.css";
 import Button from "../UI/Button/Button";
-import AuthContext from "../../store/AuthContext";
+import { loginUser, clearState } from "../../actions/UserActions";
+import showSnackbar from "../UI/Snackbar/Snackbar";
 
-const Login = () => {
-  const authCtx = useContext(AuthContext);
+const Login = (props) => {
+  const dispatch = useDispatch();
+
+  useEffect(() => {
+    if (props.loginError) {
+      showSnackbar("Unable to log into dBio", "error");
+      dispatch(clearState());
+    }
+  }, [dispatch, props.loginError]);
 
   const loginButtonHandler = (event) => {
     event.preventDefault();
-    authCtx.onLogin();
+    dispatch(loginUser());
   };
 
   return (

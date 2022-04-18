@@ -1,23 +1,30 @@
 import "./App.css";
-import React, { useContext } from "react";
+import React from "react";
 import MainHeader from "./components/MainHeader/MainHeader";
-import AuthContext from "./store/AuthContext";
 import Login from "./components/Login/Login";
 import Home from "./components/Home/Home";
 import classes from "./App.module.css";
+import { useSelector } from "react-redux";
+import { userSelector } from "./store/UserSlice";
+import { Backdrop, CircularProgress } from "@mui/material";
 
 const App = () => {
-  // Grab the Auth context to conditionally render components
-  // based on whether the user is logged in.
-  const ctx = useContext(AuthContext);
-
+  const { isFetching, isSuccess, isError } = useSelector(userSelector);
   return (
     <React.Fragment>
-      <MainHeader onLogout={ctx.logoutHandler} />
+      <MainHeader />
       <main>
         <div className={classes["resource-section"]} id="snackbar">
-          {!ctx.isLoggedIn && <Login />}
-          {ctx.isLoggedIn && <Home />}
+          {!isSuccess && <Login loginError={isError} />}
+          {isSuccess && <Home />}
+          {isFetching && (
+            <Backdrop
+              sx={{ color: "#fff", zIndex: (theme) => theme.zIndex.drawer + 1 }}
+              open={true}
+            >
+              <CircularProgress color="inherit" />
+            </Backdrop>
+          )}
         </div>
       </main>
     </React.Fragment>
