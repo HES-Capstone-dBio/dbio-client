@@ -25,11 +25,28 @@ const App = () => {
   }, [dispatch, idToken, isLoggedIn, privateKey]);
 
   return (
-    <Fragment>
-      <MainHeader />
-      <main>
-        <div className={classes["resource-section"]} id="snackbar">
-          {!isSuccess && <Login loginError={isError} />}
+    // <Fragment>
+    //   <MainHeader />
+    //   <main>
+    //     <div className={classes["resource-section"]} id="snackbar">
+    //       {!isSuccess && <Login loginError={isError} />}
+      <Layout>
+        <Route path="/" exact>
+          <Redirect to="/" />
+        </Route>
+        <Route path="/home" exact>
+          <Home />
+        </Route>
+        <Route path="/profile" exact>
+          <UserProfile />
+        </Route>
+        <Route path="/records" exact>
+          <Records />
+        </Route>
+        <Route path="/access-control" exact>
+          <AccessControl />
+        </Route>
+        {/* {!isSuccess && <Login loginError={isError} />}
           {isSuccess && <Home />}
           {isFetching && (
             <Backdrop
@@ -42,6 +59,8 @@ const App = () => {
         </div>
       </main>
     </Fragment>
+          )} */}
+      </Layout>
   );
 };
 export default App;
