@@ -22,7 +22,7 @@ const navStyle = {
   textDecoration: "none",
   fontWeight: 500,
   fontSize: "1.1rem",
-  letterSpacing: "1.18px",
+  letterSpacing: "1.02px",
   "&:hover": {
     color: "#FFFFFF",
     textDecoration: "underline",
