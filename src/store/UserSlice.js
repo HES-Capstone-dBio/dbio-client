@@ -18,7 +18,7 @@ const userSlice = createSlice({
   name: "user",
   initialState,
   reducers: {
-    clearState() {
+    clearUserState() {
       return {
         ...initialState,
       };
