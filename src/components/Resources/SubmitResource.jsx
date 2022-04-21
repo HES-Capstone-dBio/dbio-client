@@ -1,42 +1,36 @@
 import { Form, Button, Container, Spinner } from "react-bootstrap";
 import React, { useReducer } from "react";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { createResource } from "../../actions/ResourceActions";
 import showSnackbar from "../UI/Snackbar/Snackbar";
 import classes from "./SubmitResource.module.css";
+import { resourcesSelector } from "../../store/ResourcesSlice";
 
 const newResourceReducer = (state, action) => {
   if (action.type === "USER_INPUT_BODY") {
     return {
       title: state.title,
       body: action.val,
-      savingResource: false,
     };
   } else if (action.type === "USER_INPUT_TITLE") {
     return {
       title: action.val,
       body: state.body,
-      savingResource: false,
-    };
-  } else if (action.type === "SAVING_RESOURCE") {
-    return {
-      title: "",
-      body: "",
-      savingResource: true,
     };
   }
   return {
     title: "",
     body: "",
-    savingResource: false,
   };
 };
 
 const SubmitResource = () => {
+  const { isCreatingResource } =
+    useSelector(resourcesSelector);
+
   const [resourceState, dispatchResource] = useReducer(newResourceReducer, {
     title: "",
     body: "",
-    savingResource: false,
   });
 
   const dispatch = useDispatch();
@@ -52,12 +46,11 @@ const SubmitResource = () => {
   const submitHandler = (event) => {
     event.preventDefault();
 
-    const saving = resourceState.savingResource;
     const title = resourceState.title.trim();
     const body = resourceState.body.trim();
 
     // Check if we are currently saving a resource
-    if (saving) {
+    if (isCreatingResource) {
       showSnackbar("Currently saving a resource, please wait..", "error");
       return;
     } else if (!title) {
@@ -67,23 +60,16 @@ const SubmitResource = () => {
       showSnackbar("Please enter a body for the resource", "error");
       return;
     }
-
     // Update the saving resource state
-    dispatchResource({ type: "SAVING_RESOURCE" });
+    dispatchResource({});
+
 
     // Dispatch new resource to create
     dispatch(
-      createResource(
-        title,
-        body,
-        () => {
-          dispatchResource({});
-          showSnackbar("New resource created successfully");
-        },
-        () => {
-          dispatchResource({});
-        }
-      )
+      createResource({
+        title: title,
+        body: body,
+      })
     );
   };
 
@@ -108,7 +94,7 @@ const SubmitResource = () => {
           />
         </Form.Group>
         <Button className="mt-3" variant="primary" type="submit">
-          {resourceState.savingResource && (
+          {isCreatingResource && (
             <Spinner
               as="span"
               animation="border"
