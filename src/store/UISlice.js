@@ -1,12 +1,23 @@
 import { createSlice } from "@reduxjs/toolkit";
-import initializeIroncoreSDK, { deauthIroncoreSDK } from "../actions/UIActions";
+import { initializeIroncoreSDK, deauthIroncoreSDK } from "../actions/UIActions";
 
-const initialState = { ironcoreInitialized: false, torusSDK: null, isError: false, errorMessage: "" };
+const initialState = {
+  ironcoreInitialized: "",
+  torusSDK: null,
+  isError: false,
+  errorMessage: "",
+};
 
 const uiSlice = createSlice({
   name: "ui",
   initialState,
-  reducers: {},
+  reducers: {
+    clearUIState() {
+      return {
+        ...initialState,
+      };
+    },
+  },
   extraReducers: {
     [initializeIroncoreSDK.fulfilled]: (state, { payload }) => {
       state.ironcoreInitialized = payload.ironcoreInitialized;
@@ -17,12 +28,12 @@ const uiSlice = createSlice({
       state.errorMessage = payload.message;
     },
     [deauthIroncoreSDK.fulfilled]: (state, { payload }) => {
-      state = {...initialState}
+      state = { ...initialState };
     },
     [deauthIroncoreSDK.rejected]: (state, { payload }) => {
       state.isError = true;
       state.errorMessage = payload.message;
-    }
+    },
   },
 });
 

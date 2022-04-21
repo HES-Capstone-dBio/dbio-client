@@ -8,9 +8,13 @@ import {
 import TorusSdk from "@toruslabs/customauth";
 import showSnackBar from "../components/UI/Snackbar/Snackbar";
 import axios from "axios";
+import * as IronWeb from "@ironcorelabs/ironweb";
 import { initializeIroncoreSDK, deauthIroncoreSDK } from "./UIActions";
 import { setGroup } from "./GroupActions";
-import { getGroupDetails } from "../ironcore/Initialization";
+import { getGroupDetails } from "../api/Initialization";
+import { clearResourcesState } from "./ResourceActions";
+import { clearUIState } from "./UIActions";
+import { clearGroupState } from "./GroupActions";
 
 /**
  * Async thunk action creator that handles user login.
@@ -28,7 +32,6 @@ export const loginUser = createAsyncThunk(
         network: "testnet",
       });
       await torusSDK.init({ skipSw: false });
-
       const loginDetails = await torusSDK.triggerLogin({
         typeOfLogin,
         verifier,
@@ -80,14 +83,6 @@ export const loginUser = createAsyncThunk(
       // Dispatch action to set group
       await thunkAPI.dispatch(setGroup(groupDetails));
 
-      // Store user email in local storage. This will be used for making
-      // backend API calls.
-      localStorage.setItem("USER_EMAIL", userEmail);
-
-      // Store user public Ethereum address in local storage. This will be used
-      // for making backend API calls.
-      localStorage.setItem("ETH_ADDR", ethAddress);
-
       return {
         email: userEmail,
         idToken: idToken,
@@ -108,11 +103,18 @@ export const logoutUser = createAsyncThunk(
   "user/logout",
   async (args, thunkAPI) => {
     try {
-      await thunkAPI.dispatch(deauthIroncoreSDK());
-      // Remove user email from storage
-      localStorage.removeItem("USER_EMAIL");
-      // Remove Ethereum public address from local storage
-      localStorage.removeItem("ETH_ADDR");
+      // If IronCore SDK is initialized then dispatch action
+      // to deauthorize device
+      if (IronWeb.isInitialized()) {
+        await thunkAPI.dispatch(deauthIroncoreSDK());
+      }
+
+      // Clear all state
+      await thunkAPI.dispatch(clearUserState());
+      await thunkAPI.dispatch(clearGroupState());
+      await thunkAPI.dispatch(clearResourcesState());
+      await thunkAPI.dispatch(clearUIState());
+
       showSnackBar("Successfully logged out of dBio", "success");
     } catch (e) {
       console.log(e.message);
@@ -124,8 +126,8 @@ export const logoutUser = createAsyncThunk(
 /**
  * Action to clear the state of user
  */
-export const clearState = () => {
+export const clearUserState = () => {
   return {
-    type: "user/clearState",
+    type: "user/clearUserState",
   };
 };

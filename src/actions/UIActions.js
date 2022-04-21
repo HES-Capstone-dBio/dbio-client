@@ -14,7 +14,6 @@ export const initializeIroncoreSDK = createAsyncThunk(
           () => Promise.resolve(idToken),
           () => Promise.resolve(privateKey)
         );
-
         return { ironcoreInitialized: true };
       } catch (e) {
         console.log(e.message);
@@ -43,3 +42,12 @@ export const deauthIroncoreSDK = createAsyncThunk(
     return { ironcoreInitialied: false };
   }
 );
+
+/**
+ * Action to clear the state of ui
+ */
+export const clearUIState = () => {
+  return {
+    type: "ui/clearUIState",
+  };
+};

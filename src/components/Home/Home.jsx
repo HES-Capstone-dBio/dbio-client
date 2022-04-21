@@ -1,4 +1,4 @@
-import React from "react";
+import React, { Fragment } from "react";
 
 import Card from "../UI/Card/Card";
 import classes from "./Home.module.css";
@@ -8,7 +8,7 @@ import ResourceList from "../Resources/ResourceList";
 
 const Home = (props) => {
   return (
-    <React.Fragment>
+    <Fragment>
       <Card className={classes.home}>
         <SubmitResource />
         <ViewRecordsRequest />
@@ -16,7 +16,7 @@ const Home = (props) => {
       <div className={classes["resource-list"]}>
         <ResourceList />
       </div>
-    </React.Fragment>
+    </Fragment>
   );
 };
 
