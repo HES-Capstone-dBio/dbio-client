@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { Fragment, useState, useEffect } from "react";
 import { listResources, getResource } from "../../actions/ResourceActions";
 import { useSelector, useDispatch } from "react-redux";
 import {
@@ -8,14 +8,16 @@ import {
   Typography,
 } from "@mui/material";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
+import { resourcesSelector } from "../../store/ResourcesSlice";
+import showSnackbar from "../UI/Snackbar/Snackbar";
 
 // Do not reinitiliaze when component renders again. Used
 // as a flag for component's first render.
 let isInitial = true;
 
 const ResourceList = () => {
-  const resources = useSelector((state) => state.resources.resources);
-  const resourcesChanged = useSelector((state) => state.resources.changed);
+  const { resources, successCreatingResource, isError, errorMessage } =
+    useSelector(resourcesSelector);
   const [expanded, setExpanded] = useState(null);
   const [loadingRow, setLoadingRow] = useState(false);
 
@@ -23,12 +25,7 @@ const ResourceList = () => {
 
   // On initial page load get all resources that belong to this user
   useEffect(() => {
-    dispatch(
-      listResources(
-        () => {},
-        () => {}
-      )
-    );
+    dispatch(listResources());
   }, [dispatch]);
 
   useEffect(() => {
@@ -37,15 +34,16 @@ const ResourceList = () => {
       return;
     }
 
-    if (resourcesChanged) {
-      dispatch(
-        listResources(
-          () => {},
-          () => {}
-        )
-      );
+    if (successCreatingResource) {
+      dispatch(listResources());
     }
-  }, [resources, dispatch, resourcesChanged]);
+  }, [dispatch, successCreatingResource]);
+
+  useEffect(() => {
+    if (isError) {
+      showSnackbar(errorMessage, "error");
+    }
+  }, [isError, errorMessage]);
 
   useEffect(() => {
     if (expanded && typeof resources[expanded].body === "string") {
@@ -61,7 +59,7 @@ const ResourceList = () => {
     if (expanded === false || expanded !== resource.id) {
       return null;
     }
-    return <React.Fragment>{loadingRow ? "" : resource.body}</React.Fragment>;
+    return <Fragment>{loadingRow ? "" : resource.body}</Fragment>;
   };
 
   const handleChange = (resourceID) => (event, isExpanded) => {
@@ -77,9 +75,8 @@ const ResourceList = () => {
     setExpanded(resourceID);
     setLoadingRow(true);
     dispatch(
-      getResource(resourceID, () => {
-        setExpanded(null);
-        setLoadingRow(false);
+      getResource({
+        resourceID,
       })
     );
   };
@@ -124,10 +121,10 @@ const ResourceList = () => {
   };
 
   return (
-    <React.Fragment>
+    <Fragment>
       <h3>Decrypt a resource:</h3>
       {getGroupResources()}
-    </React.Fragment>
+    </Fragment>
   );
 };
 
