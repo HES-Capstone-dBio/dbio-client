@@ -3,7 +3,7 @@ import { useDispatch } from "react-redux";
 import Card from "../UI/Card/Card";
 import classes from "./Login.module.css";
 import Button from "../UI/Button/Button";
-import { loginUser, clearState } from "../../actions/UserActions";
+import { loginUser, clearUserState } from "../../actions/UserActions";
 import showSnackbar from "../UI/Snackbar/Snackbar";
 
 const Login = (props) => {
@@ -12,7 +12,7 @@ const Login = (props) => {
   useEffect(() => {
     if (props.loginError) {
       showSnackbar("Unable to log into dBio", "error");
-      dispatch(clearState());
+      dispatch(clearUserState());
     }
   }, [dispatch, props.loginError]);
 

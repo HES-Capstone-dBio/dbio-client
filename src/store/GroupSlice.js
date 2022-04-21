@@ -11,6 +11,11 @@ const groupSlice = createSlice({
   name: 'group',
   initialState,
   reducers: {
+    clearGroupState() {
+      return {
+        ...initialState,
+      };
+    },
     addUser (state, action) {
       // Add a new user ID to the list of group members
       state.members.unshift(action.payload);
