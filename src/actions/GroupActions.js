@@ -64,3 +64,12 @@ export function removeUserFromGroup(user, onSuccess, onFail) {
       });
   };
 }
+
+/**
+ * Action to clear the state of group
+ */
+ export const clearGroupState = () => {
+  return {
+    type: "group/clearGroupState",
+  };
+};
