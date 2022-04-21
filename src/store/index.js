@@ -1,28 +1,59 @@
-import * as IronCoreMiddleware from "../middleware/IronCoreMiddleware";
-import apiMiddleware from "../middleware/ApiMiddleware";
 import logger from "redux-logger";
-import { configureStore } from '@reduxjs/toolkit';
-import resourceReducer from './ResourceSlice';
-import userReducer from './UserSlice';
-import groupReducer from './GroupSlice';
+import { configureStore } from "@reduxjs/toolkit";
+import resourcesReducer from "./ResourcesSlice";
+import userReducer from "./UserSlice";
+import groupReducer from "./GroupSlice";
+import uiReducer from "./UISlice";
 import ReduxThunk from "redux-thunk";
 
+/**
+ * Converts an object to a string and stores it in localStorage
+ */
+const saveToLocalStorage = (state) => {
+  try {
+    const serializedState = JSON.stringify(state);
+    localStorage.setItem("persistantState", serializedState);
+  } catch (e) {
+    console.warn(e);
+  }
+};
+
+/**
+ * Loads a string from localStorage and converts it into
+ * an Object. Invalid output is undefined.
+ */
+const loadFromLocalStorage = () => {
+  try {
+    const serializedState = localStorage.getItem("persistantState");
+    if (serializedState === null) return undefined;
+    return JSON.parse(serializedState);
+  } catch (e) {
+    console.warn(e);
+    return undefined;
+  }
+};
 
 const middleware = [ReduxThunk];
-middleware.push(logger);
-middleware.push(IronCoreMiddleware.encryptionMiddleware);
-middleware.push(apiMiddleware);
-middleware.push(IronCoreMiddleware.decryptionMiddleware);
+
+if (process.env.NODE_ENV !== "production") {
+  middleware.push(logger);
+}
 
 const enhancers = [...middleware];
 
 const store = configureStore({
   reducer: {
-    resources: resourceReducer,
+    resources: resourcesReducer,
     group: groupReducer,
     user: userReducer,
+    ui: uiReducer,
   },
-  middleware: enhancers
+  devTools: process.env.NODE_ENV !== "production",
+  preloadedState: loadFromLocalStorage(),
+  middleware: enhancers,
 });
+
+// Listen for any changes to the store and update localStorage
+store.subscribe(() => saveToLocalStorage(store.getState()));
 
 export default store;
