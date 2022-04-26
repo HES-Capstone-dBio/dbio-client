@@ -1,38 +1,36 @@
-import "./App.css";
-import React, { Fragment, useEffect } from "react";
-import MainHeader from "./components/MainHeader/MainHeader";
-import Login from "./components/Login/Login";
-import Home from "./components/Home/Home";
-import classes from "./App.module.css";
-import { useSelector, useDispatch } from "react-redux";
-import { userSelector } from "./store/UserSlice";
-import { Backdrop, CircularProgress } from "@mui/material";
-import { initializeIroncoreSDK } from "./actions/UIActions";
-import * as IronWeb from "@ironcorelabs/ironweb";
+// import React, { useEffect } from "react";
+// import { useSelector, useDispatch } from "react-redux";
+// import { userSelector } from "./store/UserSlice";
+// import { initializeIroncoreSDK } from "./actions/UIActions";
+// import * as IronWeb from "@ironcorelabs/ironweb";
+import Layout from "./components/Layout/Layout";
+import { Route, Switch } from "react-router-dom";
+import UserProfile from "./pages/UserProfile";
+import Records from "./pages/Records";
+import Home from "./pages/Home";
+import AccessControl from "./pages/AccessControl";
+import Landing from "./pages/Landing";
+import ProtectedRoute from "./auth/ProtectedRoute";
 
 const App = () => {
-  const { isLoggedIn, idToken, privateKey, isFetching, isSuccess, isError } =
-    useSelector(userSelector);
+  // const { isLoggedIn, idToken, privateKey, isSuccess, isError } =
+  //   useSelector(userSelector);
 
-  const dispatch = useDispatch();
+  // const dispatch = useDispatch();
 
-  useEffect(() => {
-    // Reinitialize IronCore SDK if the page is refreshed by
-    // dispatching the initializeIroncoreSDK action
-    if (!IronWeb.isInitialized() && isLoggedIn) {
-      dispatch(initializeIroncoreSDK({ idToken, privateKey }));
-    }
-  }, [dispatch, idToken, isLoggedIn, privateKey]);
+  // useEffect(() => {
+  //   // Reinitialize IronCore SDK if the page is refreshed by
+  //   // dispatching the initializeIroncoreSDK action
+  //   if (!IronWeb.isInitialized() && isLoggedIn) {
+  //     dispatch(initializeIroncoreSDK({ idToken, privateKey }));
+  //   }
+  // }, [dispatch, idToken, isLoggedIn, privateKey]);
 
   return (
-    // <Fragment>
-    //   <MainHeader />
-    //   <main>
-    //     <div className={classes["resource-section"]} id="snackbar">
-    //       {!isSuccess && <Login loginError={isError} />}
-      <Layout>
+    <Layout>
+      <Switch>
         <Route path="/" exact>
-          <Redirect to="/" />
+          <Landing />
         </Route>
         <Route path="/home" exact>
           <Home />
@@ -46,21 +44,8 @@ const App = () => {
         <Route path="/access-control" exact>
           <AccessControl />
         </Route>
-        {/* {!isSuccess && <Login loginError={isError} />}
-          {isSuccess && <Home />}
-          {isFetching && (
-            <Backdrop
-              sx={{ color: "#fff", zIndex: (theme) => theme.zIndex.drawer + 1 }}
-              open={true}
-            >
-              <CircularProgress color="inherit" />
-            </Backdrop>
-          )}
-        </div>
-      </main>
-    </Fragment>
-          )} */}
-      </Layout>
+      </Switch>
+    </Layout>
   );
 };
 export default App;

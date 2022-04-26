@@ -1,8 +1,14 @@
 import { Typography, Grid, Container } from "@mui/material";
 import { Button } from "@mui/material";
 import Paper from "@mui/material/Paper";
+import { useAuth0 } from "@auth0/auth0-react";
 
 const Landing = () => {
+  const { loginWithRedirect } = useAuth0();
+
+  const loginButtonHandler = () => {
+    loginWithRedirect();
+  };
   return (
     <Grid container spacing={0} direction="row" alignItems="center">
       <Grid item xs={6} md={6} columnSpacing={3}>
@@ -30,21 +36,39 @@ const Landing = () => {
         </Container>
       </Grid>
       <Grid item xs={4} md={4} sx={{ mr: 2 }}>
-        <Container sx={{ml: 4, textAlign: "center"}}>
-          <Paper variant="outlined" sx={{ pl: 6, pt: 10, pr: 6, pb: 20, mt: 10, backgroundColor: "rgb(153, 150, 207)", transparency: 0.8}}>
+        <Container sx={{ ml: 4, textAlign: "center" }}>
+          <Paper
+            variant="outlined"
+            sx={{
+              pl: 6,
+              pt: 10,
+              pr: 6,
+              pb: 20,
+              mt: 10,
+              backgroundColor: "rgb(153, 150, 207)",
+              transparency: 0.8,
+            }}
+          >
             <Container>
               <Typography
                 color={"primary"}
-                sx={{ fontFamily: "Roboto", fontWeight: 500, fontSize: "2rem" }}
+                sx={{
+                  fontFamily: "Roboto",
+                  fontWeight: 500,
+                  fontSize: "2rem",
+                  mb: 2,
+                }}
               >
-                Log In or Sign Up for the dBio Today
+                Log In or Sign Up for dBio Today
               </Typography>
             </Container>
             <Button
+              onClick={loginButtonHandler}
               color={"primary"}
               variant="contained"
               sx={{
                 m: 3,
+                mt: 6,
                 maxWidth: "12em",
                 maxHeight: "4em",
                 minWidth: "10em",
@@ -54,10 +78,12 @@ const Landing = () => {
               Login
             </Button>
             <Button
+              onClick={loginButtonHandler}
               color={"primary"}
               variant="contained"
               sx={{
                 m: 3,
+                mt: 6,
                 maxWidth: "12em",
                 maxHeight: "4em",
                 minWidth: "10em",

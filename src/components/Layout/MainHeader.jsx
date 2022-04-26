@@ -1,4 +1,5 @@
 import * as React from "react";
+import { Fragment } from "react";
 import AppBar from "@mui/material/AppBar";
 import Box from "@mui/material/Box";
 import Toolbar from "@mui/material/Toolbar";
@@ -12,9 +13,14 @@ import Tooltip from "@mui/material/Tooltip";
 import MenuItem from "@mui/material/MenuItem";
 import logo from "../../assets/logo.svg";
 import Link from "@mui/material/Link";
+import { useAuth0 } from "@auth0/auth0-react";
 
-const pages = ["Records Dashboard", "Access Control Dashboard"];
-const settings = ["Account", "Logout"];
+const pages = [
+  ["home", "Home"],
+  ["records", "Records Dashboard"],
+  ["access-control", "Access Control Dashboard"],
+];
+const settings = ["Profile", "Logout"];
 
 const navStyle = {
   my: 2,
@@ -38,6 +44,7 @@ const navStyle = {
 };
 
 const MainHeader = (props) => {
+  const { isAuthenticated, logout } = useAuth0();
   const [anchorElNav, setAnchorElNav] = React.useState(null);
   const [anchorElUser, setAnchorElUser] = React.useState(null);
 
@@ -56,6 +63,10 @@ const MainHeader = (props) => {
     setAnchorElUser(null);
   };
 
+  const logoutHandler = () => {
+    logout({ returnTo: "window.location.origin" });
+  };
+
   return (
     <AppBar position="static">
       <Container maxWidth="xl" sx={{ mt: 2, mb: 1 }}>
@@ -66,42 +77,49 @@ const MainHeader = (props) => {
             alt="Your logo."
             src={logo}
           />
-          <Box sx={{ flexGrow: 1, display: { xs: "flex", md: "none" } }}>
-            <IconButton
-              size="large"
-              aria-label="account of current user"
-              aria-controls="menu-appbar"
-              aria-haspopup="true"
-              onClick={handleOpenNavMenu}
-              color="inherit"
-            >
-              <MenuIcon />
-            </IconButton>
-            <Menu
-              id="menu-appbar"
-              anchorEl={anchorElNav}
-              anchorOrigin={{
-                vertical: "bottom",
-                horizontal: "left",
-              }}
-              keepMounted
-              transformOrigin={{
-                vertical: "top",
-                horizontal: "left",
-              }}
-              open={Boolean(anchorElNav)}
-              onClose={handleCloseNavMenu}
-              sx={{
-                display: { xs: "block", md: "none" },
-              }}
-            >
-              {pages.map((page) => (
-                <MenuItem key={page} onClick={handleCloseNavMenu}>
-                  <Typography textAlign="center">{page}</Typography>
-                </MenuItem>
-              ))}
-            </Menu>
-          </Box>
+          {true && (
+            <Box sx={{ flexGrow: 1, display: { xs: "flex", md: "none" } }}>
+              <IconButton
+                size="large"
+                aria-label="account of current user"
+                aria-controls="menu-appbar"
+                aria-haspopup="true"
+                onClick={handleOpenNavMenu}
+                color="inherit"
+              >
+                <MenuIcon />
+              </IconButton>
+              <Menu
+                id="menu-appbar"
+                anchorEl={anchorElNav}
+                anchorOrigin={{
+                  vertical: "bottom",
+                  horizontal: "left",
+                }}
+                keepMounted
+                transformOrigin={{
+                  vertical: "top",
+                  horizontal: "left",
+                }}
+                open={Boolean(anchorElNav)}
+                onClose={handleCloseNavMenu}
+                sx={{
+                  display: { xs: "block", md: "none" },
+                }}
+              >
+                {pages.map((page) => (
+                  <MenuItem
+                    key={page[0]}
+                    component="a"
+                    href={`/${page[0]}`}
+                    onClick={handleCloseNavMenu}
+                  >
+                    <Typography textAlign="center">{page[1]}</Typography>
+                  </MenuItem>
+                ))}
+              </Menu>
+            </Box>
+          )}
           <Box
             component="img"
             sx={{
@@ -113,59 +131,66 @@ const MainHeader = (props) => {
             alt="Your logo."
             src={logo}
           />
-          <Box sx={{ flexGrow: 1, display: { xs: "none", md: "flex" } }}>
-            {pages.map((page, index) =>
-              index > 0 ? (
-                <Link
-                  href="/"
-                  key={page}
-                  onClick={handleCloseNavMenu}
-                  sx={navStyle}
-                >
-                  {page}
-                </Link>
-              ) : (
-                <Link
-                  href="/"
-                  key={page}
-                  onClick={handleCloseNavMenu}
-                  sx={{ ...navStyle, ml: 4 }}
-                >
-                  {page}
-                </Link>
-              )
-            )}
-          </Box>
+          {true && (
+            <Fragment>
+              <Box sx={{ flexGrow: 1, display: { xs: "none", md: "flex" } }}>
+                {pages.map((page, index) => (
+                  <Link
+                    href={`/${page[0]}`}
+                    key={page}
+                    onClick={handleCloseNavMenu}
+                    sx={navStyle}
+                  >
+                    {page[1]}
+                  </Link>
+                ))}
+              </Box>
 
-          <Box sx={{ flexGrow: 0 }}>
-            <Tooltip title="Open settings">
-              <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
-                <Avatar alt="Remy Sharp" src="/static/images/avatar/2.jpg" />
-              </IconButton>
-            </Tooltip>
-            <Menu
-              sx={{ mt: "45px" }}
-              id="menu-appbar"
-              anchorEl={anchorElUser}
-              anchorOrigin={{
-                vertical: "top",
-                horizontal: "right",
-              }}
-              keepMounted
-              transformOrigin={{
-                vertical: "top",
-                horizontal: "right",
-              }}
-              open={Boolean(anchorElUser)}
-              onClose={handleCloseUserMenu}
-            >
-              {settings.map((setting) => (
-                <MenuItem key={setting} onClick={handleCloseUserMenu}>
-                  <Typography textAlign="center">{setting}</Typography>
-                </MenuItem>
-              ))}
-            </Menu>
-          </Box>
+              <Box sx={{ flexGrow: 0 }}>
+                <Tooltip title="Open settings">
+                  <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
+                    <Avatar
+                      alt="Remy Sharp"
+                      src="/static/images/avatar/2.jpg"
+                    />
+                  </IconButton>
+                </Tooltip>
+                <Menu
+                  sx={{ mt: "45px" }}
+                  id="menu-appbar"
+                  anchorEl={anchorElUser}
+                  anchorOrigin={{
+                    vertical: "top",
+                    horizontal: "right",
+                  }}
+                  keepMounted
+                  transformOrigin={{
+                    vertical: "top",
+                    horizontal: "right",
+                  }}
+                  open={Boolean(anchorElUser)}
+                  onClose={handleCloseUserMenu}
+                >
+                  {settings.map((setting) =>
+                    setting.match("Logout") ? (
+                      <MenuItem key={setting} onClick={logoutHandler}>
+                        <Typography textAlign="center">{setting}</Typography>
+                      </MenuItem>
+                    ) : (
+                      <MenuItem
+                        component="a"
+                        href="/profile"
+                        key={setting}
+                        onClick={handleCloseUserMenu}
+                      >
+                        <Typography textAlign="center">{setting}</Typography>
+                      </MenuItem>
+                    )
+                  )}
+                </Menu>
+              </Box>
+            </Fragment>
+          )}
         </Toolbar>
       </Container>
     </AppBar>
