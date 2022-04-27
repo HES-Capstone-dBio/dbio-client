@@ -69,7 +69,7 @@ const MainHeader = (props) => {
 
   return (
     <AppBar position="static">
-      <Container maxWidth="xl" sx={{ mt: 2, mb: 1 }}>
+      <Container maxWidth="false" sx={{ mt: 2, mb: 1 }}>
         <Toolbar disableGutters>
           <Box
             component="img"
