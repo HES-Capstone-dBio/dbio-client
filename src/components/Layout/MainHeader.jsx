@@ -64,7 +64,14 @@ const MainHeader = (props) => {
   };
 
   const logoutHandler = () => {
-    logout({ returnTo: "window.location.origin" });
+    // Build redirect URL for logout
+    let redirectURL =
+      window.location.protocol + "//" + window.location.hostname;
+    // Check if there's a port in url
+    if (window.location.port) {
+      redirectURL = redirectURL.concat(":", window.location.port);
+    }
+    logout({ returnTo: `${redirectURL}` });
   };
 
   return (
@@ -77,7 +84,7 @@ const MainHeader = (props) => {
             alt="Your logo."
             src={logo}
           />
-          {true && (
+          {isAuthenticated && (
             <Box sx={{ flexGrow: 1, display: { xs: "flex", md: "none" } }}>
               <IconButton
                 size="large"
@@ -131,7 +138,7 @@ const MainHeader = (props) => {
             alt="Your logo."
             src={logo}
           />
-          {true && (
+          {isAuthenticated && (
             <Fragment>
               <Box sx={{ flexGrow: 1, display: { xs: "none", md: "flex" } }}>
                 {pages.map((page, index) => (
