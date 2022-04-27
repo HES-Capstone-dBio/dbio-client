@@ -11,6 +11,7 @@ import Home from "./pages/Home";
 import AccessControl from "./pages/AccessControl";
 import Landing from "./pages/Landing";
 import ProtectedRoute from "./auth/ProtectedRoute";
+import NotFound from "./pages/NotFound";
 
 const App = () => {
   // const { isLoggedIn, idToken, privateKey, isSuccess, isError } =
@@ -39,10 +40,17 @@ const App = () => {
           <UserProfile />
         </Route>
         <Route path="/records" exact>
+          {console.log("records path")}
+          <Records />
+        </Route>
+        <Route path="/records/:recordId">
           <Records />
         </Route>
         <Route path="/access-control" exact>
           <AccessControl />
+        </Route>
+        <Route path="*">
+          <NotFound />
         </Route>
       </Switch>
     </Layout>
