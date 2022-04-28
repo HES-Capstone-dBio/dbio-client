@@ -1,5 +1,4 @@
-import * as React from "react";
-import { Fragment } from "react";
+import React, { Fragment, useEffect } from "react";
 import AppBar from "@mui/material/AppBar";
 import Box from "@mui/material/Box";
 import Toolbar from "@mui/material/Toolbar";
@@ -14,6 +13,10 @@ import MenuItem from "@mui/material/MenuItem";
 import logo from "../../assets/logo.svg";
 import Link from "@mui/material/Link";
 import { useAuth0 } from "@auth0/auth0-react";
+import { useDispatch } from "react-redux";
+import { logoutUser } from "../../actions/UserActions";
+import { useHistory } from "react-router-dom";
+import { Link as RouterLink } from "react-router-dom";
 
 const pages = [
   ["home", "Home"],
@@ -44,6 +47,8 @@ const navStyle = {
 };
 
 const MainHeader = (props) => {
+  const dispatch = useDispatch();
+  const history = useHistory();
   const { isAuthenticated, logout } = useAuth0();
   const [anchorElNav, setAnchorElNav] = React.useState(null);
   const [anchorElUser, setAnchorElUser] = React.useState(null);
@@ -64,14 +69,15 @@ const MainHeader = (props) => {
   };
 
   const logoutHandler = () => {
-    // Build redirect URL for logout
-    let redirectURL =
-      window.location.protocol + "//" + window.location.hostname;
-    // Check if there's a port in url
-    if (window.location.port) {
-      redirectURL = redirectURL.concat(":", window.location.port);
-    }
-    logout({ returnTo: `${redirectURL}` });
+    // Push history to prevent rerendering home page
+    // when logoutUser thunk is dispatched.
+    history.push("/");
+
+    // Dispatch logout event.
+    dispatch(logoutUser());
+
+    // Logout of Auth0
+    logout({ returnTo: window.location.origin });
   };
 
   return (
@@ -117,8 +123,8 @@ const MainHeader = (props) => {
                 {pages.map((page) => (
                   <MenuItem
                     key={page[0]}
-                    component="a"
-                    href={`/${page[0]}`}
+                    component={RouterLink}
+                    to={`/${page[0]}`}
                     onClick={handleCloseNavMenu}
                   >
                     <Typography textAlign="center">{page[1]}</Typography>
@@ -143,7 +149,8 @@ const MainHeader = (props) => {
               <Box sx={{ flexGrow: 1, display: { xs: "none", md: "flex" } }}>
                 {pages.map((page, index) => (
                   <Link
-                    href={`/${page[0]}`}
+                    component={RouterLink}
+                    to={`/${page[0]}`}
                     key={page}
                     onClick={handleCloseNavMenu}
                     sx={navStyle}
@@ -185,8 +192,8 @@ const MainHeader = (props) => {
                       </MenuItem>
                     ) : (
                       <MenuItem
-                        component="a"
-                        href="/profile"
+                        component={RouterLink}
+                        to="/profile"
                         key={setting}
                         onClick={handleCloseUserMenu}
                       >
