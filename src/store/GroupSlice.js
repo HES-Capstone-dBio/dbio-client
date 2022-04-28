@@ -1,5 +1,5 @@
-import { createSlice } from '@reduxjs/toolkit';
-import { setGroup } from '../actions/GroupActions';
+import { createSlice } from "@reduxjs/toolkit";
+import { setGroup } from "../actions/GroupActions";
 
 const initialState = {
   id: null,
@@ -8,7 +8,7 @@ const initialState = {
 };
 
 const groupSlice = createSlice({
-  name: 'group',
+  name: "group",
   initialState,
   reducers: {
     clearGroupState() {
@@ -16,27 +16,26 @@ const groupSlice = createSlice({
         ...initialState,
       };
     },
-    addUser (state, action) {
+    addUser(state, action) {
       // Add a new user ID to the list of group members
       state.members.unshift(action.payload);
     },
-    removeUser (state, action) {
+    removeUser(state, action) {
       // Filter out user from list of users in group
-      state.members.filter((user) => user !== action.payload)
+      state.members.filter((user) => user !== action.payload);
     },
   },
-    extraReducers: {
-      [setGroup.fulfilled]: (state, { payload }) => {
-        state.id = payload.groupID;
-        state.admins = payload.groupAdmins;
-        state.members = payload.groupMembers;
-      },
-      [setGroup.rejected]: (state, { payload }) => {
-        state = {...initialState}
-      }
+  extraReducers: {
+    [setGroup.fulfilled]: (state, { payload }) => {
+      state.id = payload.groupID;
+      state.admins = payload.groupAdmins;
+      state.members = payload.groupMembers;
     },
+    [setGroup.rejected]: (state, { payload }) => {
+      state = { ...initialState };
+    },
+  },
 });
 
-
-export const groupSelector = state => state.group;
+export const groupSelector = (state) => state.group;
 export default groupSlice.reducer;
