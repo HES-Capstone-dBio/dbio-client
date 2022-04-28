@@ -2,9 +2,9 @@ import { createSlice } from "@reduxjs/toolkit";
 import { loginUser, logoutUser } from "../actions/UserActions";
 
 const initialState = {
+  name: "",
+  picture: "",
   email: "",
-  idToken: "",
-  privateKey: "",
   ethAddress: "",
   currentGroup: null,
   isLoggedIn: false,
@@ -29,10 +29,10 @@ const userSlice = createSlice({
       state.isFetching = false;
       state.isSuccess = true;
       state.isLoggedIn = true;
+      state.name = payload.name;
+      state.picture = payload.picture;
       state.email = payload.email;
-      state.idToken = payload.idToken;
       state.ethAddress = payload.ethAddress;
-      state.privateKey = payload.privateKey;
     },
     [loginUser.pending]: (state) => {
       state.isFetching = true;
@@ -44,6 +44,9 @@ const userSlice = createSlice({
     },
     [logoutUser.fulfilled]: (state, { payload }) => {
       state = { ...initialState };
+    },
+    [logoutUser.pending]: (state) => {
+      state.isFetching = true;
     },
     [logoutUser.rejected]: (state, { payload }) => {
       state.isError = true;
