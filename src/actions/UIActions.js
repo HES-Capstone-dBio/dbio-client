@@ -7,13 +7,10 @@ import * as IronWeb from "@ironcorelabs/ironweb";
 export const initializeIroncoreSDK = createAsyncThunk(
   "ui/initIroncore",
   async (userDetails, thunkAPI) => {
-    const { idToken, privateKey } = userDetails;
+    const { getIdToken, privateKey } = userDetails;
     if (!IronWeb.isInitialized()) {
       try {
-        await IronWeb.initialize(
-          () => Promise.resolve(idToken),
-          () => Promise.resolve(privateKey)
-        );
+        await IronWeb.initialize(getIdToken, () => Promise.resolve(privateKey));
         return { ironcoreInitialized: true };
       } catch (e) {
         console.log(e.message);
