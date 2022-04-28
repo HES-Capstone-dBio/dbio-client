@@ -1,10 +1,5 @@
 import { createAsyncThunk } from "@reduxjs/toolkit";
-import {
-  AUTH0_DOMAIN,
-  verifierMap,
-  GOOGLE,
-  BACKEND_ENDPOINT,
-} from "../constants/constants";
+import { BACKEND_ENDPOINT, TORUS_VERIFIER } from "../constants/constants";
 import TorusSdk from "@toruslabs/customauth";
 import showSnackBar from "../components/UI/Snackbar/Snackbar";
 import axios from "axios";
@@ -23,32 +18,32 @@ export const loginUser = createAsyncThunk(
   "user/login",
   async (args, thunkAPI) => {
     try {
-      const jwtParams = { domain: AUTH0_DOMAIN };
-      const { typeOfLogin, clientId, verifier } = verifierMap[GOOGLE];
+      const user = args.user;
+      const getIdTokenClaims = args.getIdTokenClaims;
+      const idToken = (await getIdTokenClaims()).__raw;
 
       const torusSDK = new TorusSdk({
         baseUrl: `${window.location.origin}/serviceworker`,
         enableLogging: true,
         network: "testnet",
       });
-      await torusSDK.init({ skipSw: false });
-      const loginDetails = await torusSDK.triggerLogin({
-        typeOfLogin,
-        verifier,
-        clientId,
-        jwtParams,
-      });
+      await torusSDK.init({ skipSw: true });
 
-      // Pull ID token from login details
-      const idToken = loginDetails.userInfo.idToken;
+      const torusKey = await torusSDK.getTorusKey(
+        TORUS_VERIFIER,
+        user.sub,
+        { verifier_id: user.sub },
+        idToken
+      );
+
       // Pull user private key from login details, this will be used
       // as the passcode for ironcore SDK intialization
-      const privateKey = loginDetails.privateKey;
+      const privateKey = torusKey.privateKey;
       // Store the user's public ethereum address. This will be used
       // for making backend API calls
-      const ethAddress = loginDetails.publicAddress;
+      const ethAddress = torusKey.publicAddress;
       // Retrieve user's email address
-      const userEmail = loginDetails.userInfo.email;
+      const userEmail = user.email;
 
       // At this point the user in logged in via TORUS. We should check if
       // the user exists in the backend.
@@ -74,8 +69,14 @@ export const loginUser = createAsyncThunk(
         }
       }
 
+      const getIdToken = async () => {
+        return (await getIdTokenClaims()).__raw;
+      };
+
       // Dispatch action to initialize ironcore SDK
-      await thunkAPI.dispatch(initializeIroncoreSDK({ idToken, privateKey }));
+      await thunkAPI.dispatch(
+        initializeIroncoreSDK({ getIdToken, privateKey })
+      );
 
       // Set the default group for the user (find this in Initialization.js)
       const groupDetails = await getGroupDetails(userEmail);
@@ -84,9 +85,9 @@ export const loginUser = createAsyncThunk(
       await thunkAPI.dispatch(setGroup(groupDetails));
 
       return {
+        name: user.name,
+        picture: user.picture,
         email: userEmail,
-        idToken: idToken,
-        privateKey: privateKey,
         ethAddress: ethAddress,
       };
     } catch (e) {
@@ -114,8 +115,6 @@ export const logoutUser = createAsyncThunk(
       await thunkAPI.dispatch(clearGroupState());
       await thunkAPI.dispatch(clearResourcesState());
       await thunkAPI.dispatch(clearUIState());
-
-      showSnackBar("Successfully logged out of dBio", "success");
     } catch (e) {
       console.log(e.message);
       return thunkAPI.rejectWithValue("Error logging out of dBio.");
