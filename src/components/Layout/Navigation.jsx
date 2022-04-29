@@ -15,6 +15,7 @@ import recordIcon from "../../assets/medicalrecord.svg";
 import accessIcon from "../../assets/access.svg";
 import homeIcon from "../../assets/home.svg";
 import Logout from "../auth/Logout";
+import { Link as RouterLink } from "react-router-dom";
 
 const drawerWidth = 240;
 
@@ -60,13 +61,13 @@ const Navigation = ({ children }) => {
           <Toolbar />
           <Box sx={{ overflow: "auto" }}>
             <List>
-              <ListItem button key="home">
+              <ListItem button key="home" component={RouterLink} to="/home">
                 <ListItemIcon>
                   <img src={homeIcon} alt="Home Icon" height={25} width={25} />
                 </ListItemIcon>
                 <ListItemText primary="Home" />
               </ListItem>
-              <ListItem button key="records">
+              <ListItem button key="records" component={RouterLink} to="/records">
                 <ListItemIcon>
                   <img
                     src={recordIcon}
@@ -77,7 +78,7 @@ const Navigation = ({ children }) => {
                 </ListItemIcon>
                 <ListItemText primary="Medical Records" />
               </ListItem>
-              <ListItem button key="access">
+              <ListItem button key="access" component={RouterLink} to="/access-control">
                 <ListItemIcon>
                   <img
                     src={accessIcon}
