@@ -15,7 +15,7 @@ import { useAuth0 } from "@auth0/auth0-react";
 import Loading from "./components/Layout/Loading";
 
 const App = () => {
-  const { isFetching, isLoggedIn, isError, errorMessage } =
+  const { isFetching, isLoggedIn, isError } =
     useSelector(userSelector);
 
   const { isAuthenticated, isLoading, error, getIdTokenClaims, logout } =
