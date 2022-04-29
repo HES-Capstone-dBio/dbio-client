@@ -49,6 +49,7 @@ const userSlice = createSlice({
       state.isFetching = true;
     },
     [logoutUser.rejected]: (state, { payload }) => {
+      state.isFetching = false;
       state.isError = true;
       state.errorMessage = payload.message;
     },
