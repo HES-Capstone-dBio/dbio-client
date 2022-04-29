@@ -87,7 +87,7 @@ const Navigation = ({ children }) => {
                     width={25}
                   />
                 </ListItemIcon>
-                <ListItemText primary="Manage Access Control" />
+                <ListItemText primary="Access Control" />
               </ListItem>
               <Logout />
             </List>
