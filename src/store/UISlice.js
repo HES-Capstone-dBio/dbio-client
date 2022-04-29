@@ -3,7 +3,6 @@ import { initializeIroncoreSDK, deauthIroncoreSDK } from "../actions/UIActions";
 
 const initialState = {
   ironcoreInitialized: "",
-  torusSDK: null,
   isError: false,
   errorMessage: "",
 };
