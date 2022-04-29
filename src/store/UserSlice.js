@@ -18,7 +18,7 @@ const userSlice = createSlice({
   name: "user",
   initialState,
   reducers: {
-    clearUserState() {
+    clearUIState() {
       return {
         ...initialState,
       };
@@ -45,11 +45,7 @@ const userSlice = createSlice({
     [logoutUser.fulfilled]: (state, { payload }) => {
       state = { ...initialState };
     },
-    [logoutUser.pending]: (state) => {
-      state.isFetching = true;
-    },
     [logoutUser.rejected]: (state, { payload }) => {
-      state.isFetching = false;
       state.isError = true;
       state.errorMessage = payload.message;
     },
