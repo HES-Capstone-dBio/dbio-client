@@ -12,6 +12,7 @@ const initialState = {
   isSuccess: false,
   isError: false,
   errorMessage: "",
+  privateKey: null,
 };
 
 const userSlice = createSlice({
@@ -33,6 +34,7 @@ const userSlice = createSlice({
       state.picture = payload.picture;
       state.email = payload.email;
       state.ethAddress = payload.ethAddress;
+      state.privateKey = payload.privateKey;
     },
     [loginUser.pending]: (state) => {
       state.isFetching = true;

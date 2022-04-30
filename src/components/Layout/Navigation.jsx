@@ -23,10 +23,12 @@ const Navigation = ({ children }) => {
   const { isAuthenticated } = useAuth0();
   const containerRef = useRef(null);
 
-
   return (
     <Box
-      sx={{ display: isAuthenticated ? "flex" : "inline", zIndex: (theme) => theme.zIndex.drawer + 1}}
+      sx={{
+        display: isAuthenticated ? "flex" : "inline",
+        zIndex: (theme) => theme.zIndex.drawer + 1,
+      }}
       ref={containerRef}
     >
       <CssBaseline />
