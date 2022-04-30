@@ -23,9 +23,10 @@ const Navigation = ({ children }) => {
   const { isAuthenticated } = useAuth0();
   const containerRef = useRef(null);
 
+
   return (
     <Box
-      sx={{ display: "flex", zIndex: (theme) => theme.zIndex.drawer + 1 }}
+      sx={{ display: isAuthenticated ? "flex" : "inline", zIndex: (theme) => theme.zIndex.drawer + 1}}
       ref={containerRef}
     >
       <CssBaseline />
@@ -67,7 +68,12 @@ const Navigation = ({ children }) => {
                 </ListItemIcon>
                 <ListItemText primary="Home" />
               </ListItem>
-              <ListItem button key="records" component={RouterLink} to="/records">
+              <ListItem
+                button
+                key="records"
+                component={RouterLink}
+                to="/records"
+              >
                 <ListItemIcon>
                   <img
                     src={recordIcon}
@@ -78,7 +84,12 @@ const Navigation = ({ children }) => {
                 </ListItemIcon>
                 <ListItemText primary="Medical Records" />
               </ListItem>
-              <ListItem button key="access" component={RouterLink} to="/access-control">
+              <ListItem
+                button
+                key="access"
+                component={RouterLink}
+                to="/access-control"
+              >
                 <ListItemIcon>
                   <img
                     src={accessIcon}
