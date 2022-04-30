@@ -6,13 +6,13 @@ import * as IronWeb from "@ironcorelabs/ironweb";
  * the ciphertext.
  */
 export const encryptResource = async (payload) => {
-  const { body, title, groupID } = payload;
+  const { body, title, groupId } = payload;
   try {
     const encryptedResource = await IronWeb.document.encrypt(
       IronWeb.codec.utf8.toBytes(body),
       {
         documentName: title,
-        accessList: { groups: [{ id: groupID }] },
+        accessList: { groups: [{ id: groupId }] },
       }
     );
 
@@ -42,5 +42,13 @@ export const decryptResource = async (payload) => {
     };
   } catch (e) {
     throw new Error("Unable to decrypt resource");
+  }
+};
+
+export const addUserToGroup = async (payload) => {
+  try {
+    IronWeb.group.addMembers(payload.groupId, payload.userId);
+  } catch (e) {
+    throw new Error("Unable to grant access with IronCore");
   }
 };

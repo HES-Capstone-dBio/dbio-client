@@ -9,7 +9,6 @@ export const listResources = createAsyncThunk(
   "resources/list",
   async (args, thunkAPI) => {
     const ethAddress = thunkAPI.getState().user.ethAddress;
-
     try {
       const resources = await resourceAPI.listResources(ethAddress);
 
@@ -71,14 +70,14 @@ export const createResource = createAsyncThunk(
   async (args, thunkAPI) => {
     const ethAddress = thunkAPI.getState().user.ethAddress;
     const userEmail = thunkAPI.getState().user.email;
-    const groupID = thunkAPI.getState().group.id;
+    const groupId = thunkAPI.getState().group.id;
 
     try {
       // Encrypt the resource
       const encryptedResource = await ironcoreAPI.encryptResource({
         body: args.body,
         title: args.title,
-        groupID,
+        groupId,
       });
 
       // Post the resource to protocol backend
