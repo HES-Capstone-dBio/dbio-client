@@ -35,6 +35,7 @@ const Home = () => {
   ]);
 
   const showKeyHandler = () => {
+
     if (!showPrivateKey) {
       setButtonText("Hide Ethereum Private Key");
       setPrivateKey(store.getState().user.privateKey);
@@ -139,8 +140,10 @@ const Home = () => {
                 }}
               >
                 {privateKey}
-                <Divider />
               </Typography>
+            </Fade>
+            <Fade in={showPrivateKey}>
+              <Divider />
             </Fade>
           </Box>
         </Grid>
