@@ -28,6 +28,7 @@ const userSlice = createSlice({
   extraReducers: {
     [loginUser.fulfilled]: (state, { payload }) => {
       state.isFetching = false;
+      state.isError = false;
       state.isSuccess = true;
       state.isLoggedIn = true;
       state.name = payload.name;
@@ -35,6 +36,7 @@ const userSlice = createSlice({
       state.email = payload.email;
       state.ethAddress = payload.ethAddress;
       state.privateKey = payload.privateKey;
+      state.errorMessage = "";
     },
     [loginUser.pending]: (state) => {
       state.isFetching = true;

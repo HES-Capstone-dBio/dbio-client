@@ -31,8 +31,10 @@ const resourcesSlice = createSlice({
     // Retrieve a list of resources
     [listResources.fulfilled]: (state, { payload }) => {
       state.isFetchingList = false;
+      state.isError = false;
       state.successFetchingList = true;
       state.resources = payload.resources;
+      state.errorMessage = "";
     },
     [listResources.pending]: (state) => {
       state.isFetchingList = true;
@@ -70,7 +72,7 @@ const resourcesSlice = createSlice({
     [createResource.rejected]: (state, { payload }) => {
       state.successCreatingResource = false;
       state.isCreatingResource = false;
-      state.isError = false;
+      state.isError = true;
       state.errorMessage = payload.message;
     },
   },
