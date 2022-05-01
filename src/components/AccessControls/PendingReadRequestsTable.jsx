@@ -172,7 +172,7 @@ const EnhancedTableToolbar = (props) => {
           id="tableTitle"
           component="div"
         >
-          {"Pending Write Requests"}
+          {"Pending Read Requests"}
         </Typography>
       )}
       {numSelected > 0 && (
