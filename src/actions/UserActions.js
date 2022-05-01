@@ -1,8 +1,7 @@
 import { createAsyncThunk } from "@reduxjs/toolkit";
-import { BACKEND_ENDPOINT, TORUS_VERIFIER } from "../constants/constants";
+import { TORUS_VERIFIER } from "../constants/constants";
 import TorusSdk from "@toruslabs/customauth";
 import showSnackBar from "../components/UI/Snackbar/Snackbar";
-import axios from "axios";
 import * as IronWeb from "@ironcorelabs/ironweb";
 import { initializeIroncoreSDK, deauthIroncoreSDK } from "./UIActions";
 import { setGroup } from "./AccessControlActions";
@@ -10,7 +9,7 @@ import { getGroupDetails } from "../api/Initialization";
 import { clearResourcesState } from "./ResourceActions";
 import { clearUIState } from "./UIActions";
 import { clearAccessControlState } from "./AccessControlActions";
-import * as userAPI from "../api/UsersAPI";
+import * as userAPI from "../api/UserAPI";
 
 /**
  * Async thunk action creator that handles user login.
