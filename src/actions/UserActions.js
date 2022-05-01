@@ -10,6 +10,7 @@ import { getGroupDetails } from "../api/Initialization";
 import { clearResourcesState } from "./ResourceActions";
 import { clearUIState } from "./UIActions";
 import { clearAccessControlState } from "./AccessControlActions";
+import * as userAPI from "../api/UsersAPI";
 
 /**
  * Async thunk action creator that handles user login.
@@ -48,18 +49,13 @@ export const loginUser = createAsyncThunk(
       // At this point the user in logged in via TORUS. We should check if
       // the user exists in the backend.
       try {
-        await axios.get(`${BACKEND_ENDPOINT}/dbio/users/email/${userEmail}`);
+        await userAPI.getUser(ethAddress);
       } catch (e) {
+
         // If we receive a 404 error it means that this user isn't currently
         // registered with dBio thus we need to make a post request to add them.
         if (e.response.status === 404) {
-          const postResponse = await axios.post(
-            `${BACKEND_ENDPOINT}/dbio/users`,
-            {
-              eth_public_address: ethAddress,
-              email: userEmail,
-            }
-          );
+          const postResponse = await userAPI.createUser(ethAddress, userEmail);
 
           // Check if post new user was successful
           if (postResponse.status !== 200) {
