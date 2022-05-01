@@ -51,7 +51,6 @@ export const loginUser = createAsyncThunk(
       try {
         await userAPI.getUser(ethAddress);
       } catch (e) {
-
         // If we receive a 404 error it means that this user isn't currently
         // registered with dBio thus we need to make a post request to add them.
         if (e.response.status === 404) {
