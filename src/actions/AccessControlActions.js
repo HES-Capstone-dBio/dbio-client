@@ -38,8 +38,8 @@ export const listGrantedWriteRequests = createAsyncThunk(
             ethAddress: request.requestor_eth_address,
             requestApproved: request.request_approved,
             requestOpen: request.request_open,
-            createdTime: request.created_time,
-            approvedTime: request.last_updated_time,
+            createdTime: new Date(request.created_time).toLocaleDateString(),
+            grantedTime: new Date(request.last_updated_time).toLocaleDateString(),
           };
         });
 
@@ -110,7 +110,7 @@ export const listGrantedReadRequests = createAsyncThunk(
             requestApproved: request.request_approved,
             requestOpen: request.request_open,
             createdTime: new Date(request.created_time).toLocaleDateString(),
-            approvedTime: request.last_updated_time,
+            grantedTime: new Date(request.last_updated_time).toLocaleDateString(),
           };
         });
       return {
