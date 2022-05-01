@@ -35,7 +35,6 @@ const Home = () => {
   ]);
 
   const showKeyHandler = () => {
-
     if (!showPrivateKey) {
       setButtonText("Hide Ethereum Private Key");
       setPrivateKey(store.getState().user.privateKey);

@@ -6,7 +6,7 @@ import { useDispatch } from "react-redux";
 import {
   addUserToGroup,
   removeUserFromGroup,
-} from "../../actions/GroupActions";
+} from "../../actions/AccessControlActions";
 import showSnack from "../UI/Snackbar/Snackbar";
 
 const emailReducer = (state, action) => {

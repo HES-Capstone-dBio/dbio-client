@@ -89,7 +89,7 @@ export const loginUser = createAsyncThunk(
         picture: user.picture,
         email: userEmail,
         ethAddress: ethAddress,
-        privateKey: privateKey
+        privateKey: privateKey,
       };
     } catch (e) {
       console.log(e.message);
