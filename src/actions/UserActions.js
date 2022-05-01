@@ -5,11 +5,11 @@ import showSnackBar from "../components/UI/Snackbar/Snackbar";
 import axios from "axios";
 import * as IronWeb from "@ironcorelabs/ironweb";
 import { initializeIroncoreSDK, deauthIroncoreSDK } from "./UIActions";
-import { setGroup } from "./GroupActions";
+import { setGroup } from "./AccessControlActions";
 import { getGroupDetails } from "../api/Initialization";
 import { clearResourcesState } from "./ResourceActions";
 import { clearUIState } from "./UIActions";
-import { clearGroupState } from "./GroupActions";
+import { clearAccessControlState } from "./AccessControlActions";
 
 /**
  * Async thunk action creator that handles user login.
@@ -89,6 +89,7 @@ export const loginUser = createAsyncThunk(
         picture: user.picture,
         email: userEmail,
         ethAddress: ethAddress,
+        privateKey: privateKey
       };
     } catch (e) {
       console.log(e.message);
@@ -112,7 +113,7 @@ export const logoutUser = createAsyncThunk(
 
       // Clear all state
       await thunkAPI.dispatch(clearUserState());
-      await thunkAPI.dispatch(clearGroupState());
+      await thunkAPI.dispatch(clearAccessControlState());
       await thunkAPI.dispatch(clearResourcesState());
       await thunkAPI.dispatch(clearUIState());
     } catch (e) {

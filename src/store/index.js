@@ -2,7 +2,7 @@ import logger from "redux-logger";
 import { configureStore } from "@reduxjs/toolkit";
 import resourcesReducer from "./ResourcesSlice";
 import userReducer from "./UserSlice";
-import groupReducer from "./GroupSlice";
+import accessControlReducer from "./AccessControlSlice";
 import uiReducer from "./UISlice";
 import ReduxThunk from "redux-thunk";
 
@@ -44,7 +44,7 @@ const enhancers = [...middleware];
 const store = configureStore({
   reducer: {
     resources: resourcesReducer,
-    group: groupReducer,
+    accessControl: accessControlReducer,
     user: userReducer,
     ui: uiReducer,
   },
