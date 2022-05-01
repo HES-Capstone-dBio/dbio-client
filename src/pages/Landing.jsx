@@ -84,8 +84,7 @@ const Landing = () => {
           <img
             src={record}
             alt="Record Icon"
-            maxWidth="100%"
-            maxHeight="100%"
+            sx={{ maxWidth: "100%", maxHeight: "100%" }}
           />
         </Box>
         <Typography
@@ -116,8 +115,7 @@ const Landing = () => {
           <img
             src={security}
             alt="Security Icon"
-            maxWidth="100%"
-            maxHeight="100%"
+            sx={{ maxWidth: "100%", maxHeight: "100%" }}
           />
         </Box>
         <Typography
@@ -140,7 +138,11 @@ const Landing = () => {
       </Grid>
       <Grid item xs={4} md={4} columnSpacing={0}>
         <Box sx={{ maxWidth: "80px", m: "auto" }}>
-          <img src={web3} alt="web 3 Icon" maxWidth="100%" maxHeight="100%" />
+          <img
+            src={web3}
+            alt="web 3 Icon"
+            sx={{ maxWidth: "100%", maxHeight: "100%" }}
+          />
         </Box>
         <Typography
           color={"primary"}
