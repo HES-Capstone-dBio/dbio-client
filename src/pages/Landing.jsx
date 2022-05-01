@@ -21,7 +21,7 @@ const Landing = () => {
   }
 
   return (
-    <Grid container spacing={0} direction="row" alignItems="center">
+    <Grid container spacing={0} direction="row" alignItems="center" sx={{mt:16}}>
       <Grid item xs={6} md={6} columnSpacing={3}>
         <Container sx={{ mt: 5, pb: 12 }}>
           <Typography
@@ -79,7 +79,7 @@ const Landing = () => {
           <Divider />
         </Container>
       </Grid>
-      <Grid item xs={4} md={4} columnSpacing={0}>
+      <Grid item xs={4} md={4} columnSpacing={0} sx={{pt: 22}}>
         <Box sx={{ maxWidth: "80px", m: "auto" }}>
           <img
             src={record}
@@ -106,7 +106,7 @@ const Landing = () => {
           in One Place
         </Typography>
       </Grid>
-      <Grid item xs={4} md={4} columnSpacing={0}>
+      <Grid item xs={4} md={4} columnSpacing={0} sx={{pt: 22}}>
         <Box
           alignItems="center"
           justifyContent="center"
@@ -136,7 +136,7 @@ const Landing = () => {
           <br /> Maximum Security
         </Typography>
       </Grid>
-      <Grid item xs={4} md={4} columnSpacing={0}>
+      <Grid item xs={4} md={4} columnSpacing={0} sx={{pt: 22}}>
         <Box sx={{ maxWidth: "80px", m: "auto" }}>
           <img
             src={web3}
