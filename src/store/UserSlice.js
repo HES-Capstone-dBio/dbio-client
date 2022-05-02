@@ -6,7 +6,6 @@ const initialState = {
   picture: "",
   email: "",
   ethAddress: "",
-  currentGroup: null,
   isLoggedIn: false,
   isFetching: false,
   isSuccess: false,
