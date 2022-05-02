@@ -1,15 +1,15 @@
 import { createAsyncThunk } from "@reduxjs/toolkit";
-import { BACKEND_ENDPOINT, TORUS_VERIFIER } from "../constants/constants";
+import { TORUS_VERIFIER } from "../constants/constants";
 import TorusSdk from "@toruslabs/customauth";
 import showSnackBar from "../components/UI/Snackbar/Snackbar";
-import axios from "axios";
 import * as IronWeb from "@ironcorelabs/ironweb";
 import { initializeIroncoreSDK, deauthIroncoreSDK } from "./UIActions";
-import { setGroup } from "./GroupActions";
+import { setGroup } from "./AccessControlActions";
 import { getGroupDetails } from "../api/Initialization";
 import { clearResourcesState } from "./ResourceActions";
 import { clearUIState } from "./UIActions";
-import { clearGroupState } from "./GroupActions";
+import { clearAccessControlState } from "./AccessControlActions";
+import * as userAPI from "../api/UserAPI";
 
 /**
  * Async thunk action creator that handles user login.
@@ -48,18 +48,12 @@ export const loginUser = createAsyncThunk(
       // At this point the user in logged in via TORUS. We should check if
       // the user exists in the backend.
       try {
-        await axios.get(`${BACKEND_ENDPOINT}/dbio/users/email/${userEmail}`);
+        await userAPI.getUser(ethAddress);
       } catch (e) {
         // If we receive a 404 error it means that this user isn't currently
         // registered with dBio thus we need to make a post request to add them.
         if (e.response.status === 404) {
-          const postResponse = await axios.post(
-            `${BACKEND_ENDPOINT}/dbio/users`,
-            {
-              eth_public_address: ethAddress,
-              email: userEmail,
-            }
-          );
+          const postResponse = await userAPI.createUser(ethAddress, userEmail);
 
           // Check if post new user was successful
           if (postResponse.status !== 200) {
@@ -89,6 +83,7 @@ export const loginUser = createAsyncThunk(
         picture: user.picture,
         email: userEmail,
         ethAddress: ethAddress,
+        privateKey: privateKey,
       };
     } catch (e) {
       console.log(e.message);
@@ -112,7 +107,7 @@ export const logoutUser = createAsyncThunk(
 
       // Clear all state
       await thunkAPI.dispatch(clearUserState());
-      await thunkAPI.dispatch(clearGroupState());
+      await thunkAPI.dispatch(clearAccessControlState());
       await thunkAPI.dispatch(clearResourcesState());
       await thunkAPI.dispatch(clearUIState());
     } catch (e) {

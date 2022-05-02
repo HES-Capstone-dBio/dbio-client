@@ -6,13 +6,13 @@ import * as IronWeb from "@ironcorelabs/ironweb";
  * the ciphertext.
  */
 export const encryptResource = async (payload) => {
-  const { body, title, groupID } = payload;
+  const { body, title, groupId } = payload;
   try {
     const encryptedResource = await IronWeb.document.encrypt(
       IronWeb.codec.utf8.toBytes(body),
       {
         documentName: title,
-        accessList: { groups: [{ id: groupID }] },
+        accessList: { groups: [{ id: groupId }] },
       }
     );
 
@@ -42,5 +42,63 @@ export const decryptResource = async (payload) => {
     };
   } catch (e) {
     throw new Error("Unable to decrypt resource");
+  }
+};
+
+/**
+ * Add a third party to the user's current group
+ */
+export const addUserToGroup = async (payload) => {
+  try {
+    await IronWeb.group.addMembers(payload.groupId, [payload.userId]);
+  } catch (e) {
+    throw new Error("Unable to grant access with IronCore");
+  }
+};
+
+/**
+ * Remove a third party from the user's current group
+ */
+export const removeUserFromGroup = async (payload) => {
+  try {
+    await IronWeb.group.removeMembers(payload.groupId, [payload.userId]);
+  } catch (e) {
+    throw new Error("Unable to remove access from IronCore");
+  }
+};
+
+/**
+ * Get IronCore details about a specific IronCore Group
+ */
+export const getGroupDetails = async (groupId) => {
+  try {
+    return await IronWeb.group.get(groupId);
+  } catch (e) {
+    throw new Error("Unable to get IronCore group details");
+  }
+};
+
+/**
+ * Initialize the IronCore SDK
+ */
+export const initializeSDK = async (payload) => {
+  try {
+    await IronWeb.initialize(payload.getIdToken, () =>
+      Promise.resolve(payload.privateKey)
+    );
+    return true;
+  } catch (e) {
+    throw new Error("Unable to initialize IronCore SDK");
+  }
+};
+
+/**
+ * Deauthorize IronCore SDK
+ */
+export const deauthSDK = async () => {
+  try {
+    await IronWeb.user.deauthorizeDevice();
+  } catch (e) {
+    throw new Error("Unable to deauthorize IronCore SDK");
   }
 };

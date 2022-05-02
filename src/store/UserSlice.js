@@ -6,12 +6,12 @@ const initialState = {
   picture: "",
   email: "",
   ethAddress: "",
-  currentGroup: null,
   isLoggedIn: false,
   isFetching: false,
   isSuccess: false,
   isError: false,
   errorMessage: "",
+  privateKey: null,
 };
 
 const userSlice = createSlice({
@@ -27,12 +27,15 @@ const userSlice = createSlice({
   extraReducers: {
     [loginUser.fulfilled]: (state, { payload }) => {
       state.isFetching = false;
+      state.isError = false;
       state.isSuccess = true;
       state.isLoggedIn = true;
       state.name = payload.name;
       state.picture = payload.picture;
       state.email = payload.email;
       state.ethAddress = payload.ethAddress;
+      state.privateKey = payload.privateKey;
+      state.errorMessage = "";
     },
     [loginUser.pending]: (state) => {
       state.isFetching = true;

@@ -1,5 +1,6 @@
 import { createAsyncThunk } from "@reduxjs/toolkit";
 import * as IronWeb from "@ironcorelabs/ironweb";
+import { initializeSDK, deauthSDK } from "../api/IroncoreAPI";
 
 /**
  * Async Thunk action creator to initialize ironcore SDK.
@@ -10,7 +11,7 @@ export const initializeIroncoreSDK = createAsyncThunk(
     const { getIdToken, privateKey } = userDetails;
     if (!IronWeb.isInitialized()) {
       try {
-        await IronWeb.initialize(getIdToken, () => Promise.resolve(privateKey));
+        await initializeSDK({ getIdToken, privateKey });
         return { ironcoreInitialized: true };
       } catch (e) {
         console.log(e.message);
@@ -28,7 +29,7 @@ export const deauthIroncoreSDK = createAsyncThunk(
   async (thunkAPI) => {
     if (IronWeb.isInitialized) {
       try {
-        await IronWeb.user.deauthorizeDevice();
+        await deauthSDK();
       } catch (e) {
         console.log(e.message);
         return thunkAPI.rejectWithValue(
