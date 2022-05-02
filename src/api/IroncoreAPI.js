@@ -46,13 +46,35 @@ export const decryptResource = async (payload) => {
 };
 
 /**
- * Add a a third party to the user's current group
+ * Add a third party to the user's current group
  */
 export const addUserToGroup = async (payload) => {
   try {
-    IronWeb.group.addMembers(payload.groupId, payload.userId);
+    await IronWeb.group.addMembers(payload.groupId, [payload.userId]);
   } catch (e) {
     throw new Error("Unable to grant access with IronCore");
+  }
+};
+
+/**
+ * Remove a third party from the user's current group
+ */
+export const removeUserFromGroup = async (payload) => {
+  try {
+    await IronWeb.group.removeMembers(payload.groupId, [payload.userId]);
+  } catch (e) {
+    throw new Error("Unable to remove access from IronCore");
+  }
+};
+
+/**
+ * Get IronCore details about a specific IronCore Group
+ */
+export const getGroupDetails = async (groupId) => {
+  try {
+    return await IronWeb.group.get(groupId);
+  } catch (e) {
+    throw new Error("Unable to get IronCore group details");
   }
 };
 
@@ -61,7 +83,9 @@ export const addUserToGroup = async (payload) => {
  */
 export const initializeSDK = async (payload) => {
   try {
-    await IronWeb.initialize(payload.getIdToken, () => Promise.resolve(payload.privateKey));
+    await IronWeb.initialize(payload.getIdToken, () =>
+      Promise.resolve(payload.privateKey)
+    );
     return true;
   } catch (e) {
     throw new Error("Unable to initialize IronCore SDK");
