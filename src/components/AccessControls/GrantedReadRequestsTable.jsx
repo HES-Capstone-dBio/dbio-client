@@ -1,195 +1,20 @@
 import React, { useState } from "react";
-import PropTypes from "prop-types";
-import { alpha } from "@mui/material/styles";
 import Box from "@mui/material/Box";
 import Table from "@mui/material/Table";
 import TableBody from "@mui/material/TableBody";
 import TableCell from "@mui/material/TableCell";
 import TableContainer from "@mui/material/TableContainer";
-import TableHead from "@mui/material/TableHead";
 import TablePagination from "@mui/material/TablePagination";
 import TableRow from "@mui/material/TableRow";
-import TableSortLabel from "@mui/material/TableSortLabel";
-import Toolbar from "@mui/material/Toolbar";
-import Typography from "@mui/material/Typography";
 import Paper from "@mui/material/Paper";
 import Checkbox from "@mui/material/Checkbox";
-import IconButton from "@mui/material/IconButton";
-import Tooltip from "@mui/material/Tooltip";
-import DeleteIcon from "@mui/icons-material/Delete";
-import { visuallyHidden } from "@mui/utils";
 import { useSelector, useDispatch } from "react-redux";
 import { accessControlSelector } from "../../store/AccessControlSlice";
 import { updateReadRequest } from "../../actions/AccessControlActions";
+import { getComparator, stableSort } from "./TableUtils";
+import GrantedTableToolbar from "./GrantedTableToolbar";
+import GrantedTableHead from "./GrantedTableHead";
 
-function descendingComparator(a, b, orderBy) {
-  if (b[orderBy] < a[orderBy]) {
-    return -1;
-  }
-  if (b[orderBy] > a[orderBy]) {
-    return 1;
-  }
-  return 0;
-}
-
-function getComparator(order, orderBy) {
-  return order === "desc"
-    ? (a, b) => descendingComparator(a, b, orderBy)
-    : (a, b) => -descendingComparator(a, b, orderBy);
-}
-
-// This method is created for cross-browser compatibility, if you don't
-// need to support IE11, you can use Array.prototype.sort() directly
-function stableSort(array, comparator) {
-  const stabilizedThis = array.map((el, index) => [el, index]);
-  stabilizedThis.sort((a, b) => {
-    const order = comparator(a[0], b[0]);
-    if (order !== 0) {
-      return order;
-    }
-    return a[1] - b[1];
-  });
-  return stabilizedThis.map((el) => el[0]);
-}
-
-const headCells = [
-  {
-    id: "name",
-    numeric: false,
-    label: "Name",
-  },
-  {
-    id: "ethAddress",
-    numeric: false,
-    label: "Ethereum Address",
-  },
-  {
-    id: "createdTime",
-    numeric: false,
-    label: "Date Created",
-  },
-  {
-    id: "grantedTime",
-    numeric: false,
-    label: "Date Approved",
-  },
-];
-
-const EnhancedTableHead = (props) => {
-  const {
-    onSelectAllClick,
-    order,
-    orderBy,
-    numSelected,
-    rowCount,
-    onRequestSort,
-  } = props;
-  const createSortHandler = (property) => (event) => {
-    onRequestSort(event, property);
-  };
-
-  return (
-    <TableHead>
-      <TableRow>
-        <TableCell padding="checkbox">
-          <Checkbox
-            color="primary"
-            indeterminate={numSelected > 0 && numSelected < rowCount}
-            checked={rowCount > 0 && numSelected === rowCount}
-            onChange={onSelectAllClick}
-            inputProps={{
-              "aria-label": "select all requests",
-            }}
-          />
-        </TableCell>
-        {headCells.map((headCell) => (
-          <TableCell
-            key={headCell.id}
-            align={headCell.numeric ? "right" : "left"}
-            sortDirection={orderBy === headCell.id ? order : false}
-          >
-            <TableSortLabel
-              active={orderBy === headCell.id}
-              direction={orderBy === headCell.id ? order : "asc"}
-              onClick={createSortHandler(headCell.id)}
-            >
-              {headCell.label}
-              {orderBy === headCell.id ? (
-                <Box component="span" sx={visuallyHidden}>
-                  {order === "desc" ? "sorted descending" : "sorted ascending"}
-                </Box>
-              ) : null}
-            </TableSortLabel>
-          </TableCell>
-        ))}
-      </TableRow>
-    </TableHead>
-  );
-};
-
-EnhancedTableHead.propTypes = {
-  numSelected: PropTypes.number.isRequired,
-  onRequestSort: PropTypes.func.isRequired,
-  onSelectAllClick: PropTypes.func.isRequired,
-  order: PropTypes.oneOf(["asc", "desc"]).isRequired,
-  orderBy: PropTypes.string.isRequired,
-  rowCount: PropTypes.number.isRequired,
-};
-
-const EnhancedTableToolbar = (props) => {
-  const { numSelected } = props;
-
-  return (
-    <Toolbar
-      sx={{
-        pl: { sm: 2 },
-        pr: { xs: 1, sm: 1 },
-        ...(numSelected > 0
-          ? {
-              bgcolor: (theme) =>
-                alpha(
-                  theme.palette.primary.main,
-                  theme.palette.action.activatedOpacity
-                ),
-            }
-          : {
-              bgcolor: "rgba(69, 63, 181, 0.35)",
-            }),
-      }}
-    >
-      {numSelected > 0 ? (
-        <Typography
-          sx={{ flex: "1 1 100%" }}
-          color="inherit"
-          variant="subtitle1"
-          component="div"
-        >
-          {numSelected} selected
-        </Typography>
-      ) : (
-        <Typography
-          sx={{ flex: "1 1 100%" }}
-          variant="h6"
-          id="tableTitle"
-          component="div"
-        >
-          {"Granted Read Requests"}
-        </Typography>
-      )}
-      {numSelected > 0 && (
-        <Tooltip title="Delete">
-          <IconButton onClick={props.deleteRequestHandler}>
-            <DeleteIcon />
-          </IconButton>
-        </Tooltip>
-      )}
-    </Toolbar>
-  );
-};
-
-EnhancedTableToolbar.propTypes = {
-  numSelected: PropTypes.number.isRequired,
-};
 
 const GrantedReadRequestsTable = () => {
   const dispatch = useDispatch();
@@ -261,7 +86,8 @@ const GrantedReadRequestsTable = () => {
   return (
     <Box sx={{ width: "100%" }}>
       <Paper sx={{ width: "100%", mb: 2 }}>
-        <EnhancedTableToolbar
+        <GrantedTableToolbar
+          tableTitle="Granted Read Requests"
           numSelected={selected.length}
           deleteRequestHandler={deleteRequestHandler}
         />
@@ -271,7 +97,7 @@ const GrantedReadRequestsTable = () => {
             aria-labelledby="tableTitle"
             size="small"
           >
-            <EnhancedTableHead
+            <GrantedTableHead
               numSelected={selected.length}
               order={order}
               orderBy={orderBy}
