@@ -33,7 +33,9 @@ const PendingReadRequestsTable = () => {
 
   const handleSelectAllClick = (event) => {
     if (event.target.checked) {
-      const newSelecteds = pendingReadRequests.map((n) => n.id);
+      const newSelecteds = pendingReadRequests.map((n) => {
+        return { id: n.id, ethAddress: n.ethAddress };
+      });
       setSelected(newSelecteds);
       return;
     }

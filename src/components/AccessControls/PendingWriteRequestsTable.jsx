@@ -33,7 +33,9 @@ const PendingWriteRequestsTable = () => {
 
   const handleSelectAllClick = (event) => {
     if (event.target.checked) {
-      const newSelecteds = pendingWriteRequests.map((n) => n.id);
+      const newSelecteds = pendingWriteRequests.map((n) => {
+        return { id: n.id, ethAddress: n.ethAddress };
+      });
       setSelected(newSelecteds);
       return;
     }

@@ -33,7 +33,9 @@ const GrantedWriteRequestsTable = () => {
 
   const handleSelectAllClick = (event) => {
     if (event.target.checked) {
-      const newSelecteds = grantedWriteRequests.map((n) => n.id);
+      const newSelecteds = grantedWriteRequests.map((n) => {
+        return { id: n.id, ethAddress: n.ethAddress };
+      });
       setSelected(newSelecteds);
       return;
     }

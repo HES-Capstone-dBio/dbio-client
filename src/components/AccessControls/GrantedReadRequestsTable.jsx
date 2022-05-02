@@ -33,7 +33,9 @@ const GrantedReadRequestsTable = () => {
 
   const handleSelectAllClick = (event) => {
     if (event.target.checked) {
-      const newSelecteds = grantedReadRequests.map((n) => n.id);
+      const newSelecteds = grantedReadRequests.map((n) => {
+        return { id: n.id, ethAddress: n.ethAddress };
+      });
       setSelected(newSelecteds);
       return;
     }
