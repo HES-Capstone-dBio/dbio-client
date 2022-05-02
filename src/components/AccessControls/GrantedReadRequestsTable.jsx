@@ -153,8 +153,7 @@ const EnhancedTableToolbar = (props) => {
                 ),
             }
           : {
-              // bgcolor: "rgba(69, 63, 181, 0.48)"
-              bgcolor: "rgba(69, 63, 181, 0.35)"
+              bgcolor: "rgba(69, 63, 181, 0.35)",
             }),
       }}
     >
