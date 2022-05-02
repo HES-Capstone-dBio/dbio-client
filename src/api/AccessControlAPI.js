@@ -27,7 +27,7 @@ export const listWriteRequests = async (ethAddress) => {
       `${BACKEND_ENDPOINT}/dbio/write_requests/${ethAddress}`,
       { params: { filter: "all" } }
     );
-    console.log(response.data);
+
     return response.data;
   } catch (e) {
     throw new Error("Failed to retrieve write requests from server.");
@@ -41,6 +41,7 @@ export const updateReadRequest = async (requestId, approve) => {
   try {
     const response = await axios.put(
       `${BACKEND_ENDPOINT}/dbio/read_requests/${requestId}`,
+      {},
       { params: { approve } }
     );
 
@@ -57,6 +58,7 @@ export const updateWriteRequest = async (requestId, approve) => {
   try {
     const response = await axios.put(
       `${BACKEND_ENDPOINT}/dbio/write_requests/${requestId}`,
+      {},
       { params: { approve } }
     );
 
