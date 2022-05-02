@@ -15,7 +15,6 @@ import { getComparator, stableSort } from "./TableUtils";
 import GrantedTableToolbar from "./GrantedTableToolbar";
 import GrantedTableHead from "./GrantedTableHead";
 
-
 const GrantedReadRequestsTable = () => {
   const dispatch = useDispatch();
   const { grantedReadRequests } = useSelector(accessControlSelector);
