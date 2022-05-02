@@ -1,5 +1,7 @@
 import { createAsyncThunk } from "@reduxjs/toolkit";
 import * as accessControlAPI from "../api/AccessControlAPI";
+import * as ironcoreAPI from "../api/IroncoreAPI";
+import * as userAPI from "../api/UserAPI";
 import store from "../store";
 
 /**
@@ -8,7 +10,7 @@ import store from "../store";
 export const setGroup = createAsyncThunk(
   "group/setGroup",
   async (group, thunkAPI) => {
-    return group;
+    return { groupId: group.groupID };
   }
 );
 
@@ -39,7 +41,9 @@ export const listGrantedWriteRequests = createAsyncThunk(
             requestApproved: request.request_approved,
             requestOpen: request.request_open,
             createdTime: new Date(request.created_time).toLocaleDateString(),
-            grantedTime: new Date(request.last_updated_time).toLocaleDateString(),
+            grantedTime: new Date(
+              request.last_updated_time
+            ).toLocaleDateString(),
           };
         });
 
@@ -110,7 +114,9 @@ export const listGrantedReadRequests = createAsyncThunk(
             requestApproved: request.request_approved,
             requestOpen: request.request_open,
             createdTime: new Date(request.created_time).toLocaleDateString(),
-            grantedTime: new Date(request.last_updated_time).toLocaleDateString(),
+            grantedTime: new Date(
+              request.last_updated_time
+            ).toLocaleDateString(),
           };
         });
       return {
@@ -159,33 +165,71 @@ export const listPendingReadRequests = createAsyncThunk(
   }
 );
 
+/**
+ * Async thunk action creator to update read requests.
+ */
 export const updateReadRequest = createAsyncThunk(
   "accessControl/updateReadRequest",
   async (args, thunkAPI) => {
     try {
-      const groupId = store.getState().accessControl.groupId;
-      const ethAddress = store.getState().user.ethAddress;
+      const requests = args.requests;
+      const approve = args.approve;
 
-      // Check ironcore API if user already is member of group
-      // If not member of group then add to member of group with ironcore API
-      // If successfully addeded via ironcore API then call axios
-      // If axios fails then remove from ironcore API
+      const groupId = store.getState().accessControl.groupId;
+
+      // Loop through each request in the array
+      for (const request of requests) {
+        // Get the user's email via their ethereum address
+        const { email } = (await userAPI.getUser(request.ethAddress)).data;
+
+        // Make a call to ironcore SDK to either add or remove user(s)
+        // from group.
+        if (approve) {
+          await ironcoreAPI.addUserToGroup({ groupId, userId: email });
+        } else {
+          await ironcoreAPI.removeUserFromGroup({ groupId, userId: email });
+        }
+
+        try {
+          await accessControlAPI.updateReadRequest(request.id, approve);
+        } catch (e) {
+          // If protocol call fails then roll back IronCore.
+          if (!approve) {
+            await ironcoreAPI.addUserToGroup({ groupId, userId: email });
+          } else {
+            await ironcoreAPI.removeUserFromGroup({ groupId, userId: email });
+          }
+        }
+      }
+
+      // Dispatch action to read access requests
+      await thunkAPI.dispatch(listPendingReadRequests());
+      await thunkAPI.dispatch(listGrantedReadRequests());
     } catch (e) {
-      return thunkAPI.rejectWithValue("Unable to grant read request");
+      console.log(e);
+      return thunkAPI.rejectWithValue("Unable to update read request");
     }
   }
 );
 
+/**
+ * Async thunk action creator to update write requests.
+ */
 export const updateWriteRequest = createAsyncThunk(
   "accessControl/updateWriteRequest",
   async (args, thunkAPI) => {
     try {
-      const groupId = store.getState().accessControl.groupId;
-      const ethAddress = store.getState().user.ethAddress;
-      // Check ironcore API if user already is member of group
-      // If not member of group then add to member of group with ironcore API
-      // If successfully addeded via ironcore API then call axios
-      // If axios fails then remove from ironcore API
+      const requests = args.requests;
+      const approve = args.approve;
+
+      // Loop through each request in the array
+      for (const request of requests) {
+        await accessControlAPI.updateWriteRequest(request.id, approve);
+      }
+
+      // Dispatch action to update write access requests
+      await thunkAPI.dispatch(listPendingWriteRequests());
+      await thunkAPI.dispatch(listGrantedWriteRequests());
     } catch (e) {
       return thunkAPI.rejectWithValue("Unable to grant write request");
     }
