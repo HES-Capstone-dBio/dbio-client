@@ -21,6 +21,7 @@ import { visuallyHidden } from "@mui/utils";
 import { CheckCircle } from "@mui/icons-material";
 import { useSelector, useDispatch } from "react-redux";
 import { accessControlSelector } from "../../store/AccessControlSlice";
+import { updateWriteRequest } from "../../actions/AccessControlActions";
 
 function descendingComparator(a, b, orderBy) {
   if (b[orderBy] < a[orderBy]) {
@@ -134,14 +135,6 @@ EnhancedTableHead.propTypes = {
 const EnhancedTableToolbar = (props) => {
   const { numSelected } = props;
 
-  const deleteRequestHandler = () => {
-    console.log("deleting");
-  };
-
-  const approveRequestHandler = () => {
-    console.log("Approving request");
-  };
-
   return (
     <Toolbar
       sx={{
@@ -177,14 +170,14 @@ const EnhancedTableToolbar = (props) => {
       )}
       {numSelected > 0 && (
         <Tooltip title="Approve">
-          <IconButton onClick={approveRequestHandler}>
+          <IconButton onClick={props.approveRequestHandler}>
             <CheckCircle />
           </IconButton>
         </Tooltip>
       )}
       {numSelected > 0 && (
         <Tooltip title="Delete">
-          <IconButton onClick={deleteRequestHandler}>
+          <IconButton onClick={props.deleteRequestHandler}>
             <DeleteIcon />
           </IconButton>
         </Tooltip>
@@ -199,8 +192,8 @@ EnhancedTableToolbar.propTypes = {
 
 const PendingWriteRequestsTable = () => {
   const dispatch = useDispatch();
-  const { pendingWriteRequests } = useSelector(accessControlSelector);
 
+  const { pendingWriteRequests } = useSelector(accessControlSelector);
   const [order, setOrder] = useState("asc");
   const [orderBy, setOrderBy] = useState("calories");
   const [selected, setSelected] = useState([]);
@@ -215,19 +208,19 @@ const PendingWriteRequestsTable = () => {
 
   const handleSelectAllClick = (event) => {
     if (event.target.checked) {
-      const newSelecteds = pendingWriteRequests.map((n) => n.name);
+      const newSelecteds = pendingWriteRequests.map((n) => n.id);
       setSelected(newSelecteds);
       return;
     }
     setSelected([]);
   };
 
-  const handleClick = (event, name) => {
-    const selectedIndex = selected.indexOf(name);
+  const handleClick = (event, id, ethAddress) => {
+    const selectedIndex = selected.map((e) => e.id).indexOf(id);
     let newSelected = [];
 
     if (selectedIndex === -1) {
-      newSelected = newSelected.concat(selected, name);
+      newSelected = newSelected.concat(selected, { id, ethAddress });
     } else if (selectedIndex === 0) {
       newSelected = newSelected.concat(selected.slice(1));
     } else if (selectedIndex === selected.length - 1) {
@@ -251,7 +244,17 @@ const PendingWriteRequestsTable = () => {
     setPage(0);
   };
 
-  const isSelected = (name) => selected.indexOf(name) !== -1;
+  const deleteRequestHandler = () => {
+    dispatch(updateWriteRequest({ requests: selected, approve: false }));
+    setSelected([]);
+  };
+
+  const approveRequestHandler = () => {
+    dispatch(updateWriteRequest({ requests: selected, approve: true }));
+    setSelected([]);
+  };
+
+  const isSelected = (id) => selected.map((e) => e.id).indexOf(id) !== -1;
 
   // Avoid a layout jump when reaching the last page with empty rows.
   const emptyRows =
@@ -262,7 +265,11 @@ const PendingWriteRequestsTable = () => {
   return (
     <Box sx={{ width: "100%" }}>
       <Paper sx={{ width: "100%", mb: 2 }}>
-        <EnhancedTableToolbar numSelected={selected.length} />
+        <EnhancedTableToolbar
+          numSelected={selected.length}
+          deleteRequestHandler={deleteRequestHandler}
+          approveRequestHandler={approveRequestHandler}
+        />
         <TableContainer>
           <Table
             sx={{ minWidth: 300 }}
@@ -283,17 +290,19 @@ const PendingWriteRequestsTable = () => {
               {stableSort(pendingWriteRequests, getComparator(order, orderBy))
                 .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                 .map((row, index) => {
-                  const isItemSelected = isSelected(row.name);
+                  const isItemSelected = isSelected(row.id);
                   const labelId = `enhanced-table-checkbox-${index}`;
 
                   return (
                     <TableRow
                       hover
-                      onClick={(event) => handleClick(event, row.name)}
+                      onClick={(event) =>
+                        handleClick(event, row.id, row.ethAddress)
+                      }
                       role="checkbox"
                       aria-checked={isItemSelected}
                       tabIndex={-1}
-                      key={row.name}
+                      key={row.id}
                       selected={isItemSelected}
                     >
                       <TableCell padding="checkbox">

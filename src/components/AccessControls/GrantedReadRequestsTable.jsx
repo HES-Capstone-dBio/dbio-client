@@ -20,6 +20,7 @@ import DeleteIcon from "@mui/icons-material/Delete";
 import { visuallyHidden } from "@mui/utils";
 import { useSelector, useDispatch } from "react-redux";
 import { accessControlSelector } from "../../store/AccessControlSlice";
+import { updateReadRequest } from "../../actions/AccessControlActions";
 
 function descendingComparator(a, b, orderBy) {
   if (b[orderBy] < a[orderBy]) {
@@ -138,10 +139,6 @@ EnhancedTableHead.propTypes = {
 const EnhancedTableToolbar = (props) => {
   const { numSelected } = props;
 
-  const deleteRequestHandler = () => {
-    console.log("deleting");
-  };
-
   return (
     <Toolbar
       sx={{
@@ -177,7 +174,7 @@ const EnhancedTableToolbar = (props) => {
       )}
       {numSelected > 0 && (
         <Tooltip title="Delete">
-          <IconButton onClick={deleteRequestHandler}>
+          <IconButton onClick={props.deleteRequestHandler}>
             <DeleteIcon />
           </IconButton>
         </Tooltip>
@@ -208,19 +205,19 @@ const GrantedReadRequestsTable = () => {
 
   const handleSelectAllClick = (event) => {
     if (event.target.checked) {
-      const newSelecteds = grantedReadRequests.map((n) => n.name);
+      const newSelecteds = grantedReadRequests.map((n) => n.id);
       setSelected(newSelecteds);
       return;
     }
     setSelected([]);
   };
 
-  const handleClick = (event, name) => {
-    const selectedIndex = selected.indexOf(name);
+  const handleClick = (event, id, ethAddress) => {
+    const selectedIndex = selected.map((e) => e.id).indexOf(id);
     let newSelected = [];
 
     if (selectedIndex === -1) {
-      newSelected = newSelected.concat(selected, name);
+      newSelected = newSelected.concat(selected, { id, ethAddress });
     } else if (selectedIndex === 0) {
       newSelected = newSelected.concat(selected.slice(1));
     } else if (selectedIndex === selected.length - 1) {
@@ -244,7 +241,12 @@ const GrantedReadRequestsTable = () => {
     setPage(0);
   };
 
-  const isSelected = (name) => selected.indexOf(name) !== -1;
+  const deleteRequestHandler = () => {
+    dispatch(updateReadRequest({ requests: selected, approve: false }));
+    setSelected([]);
+  };
+
+  const isSelected = (id) => selected.map((e) => e.id).indexOf(id) !== -1;
 
   // Avoid a layout jump when reaching the last page with empty rows.
   const emptyRows =
@@ -255,7 +257,10 @@ const GrantedReadRequestsTable = () => {
   return (
     <Box sx={{ width: "100%" }}>
       <Paper sx={{ width: "100%", mb: 2 }}>
-        <EnhancedTableToolbar numSelected={selected.length} />
+        <EnhancedTableToolbar
+          numSelected={selected.length}
+          deleteRequestHandler={deleteRequestHandler}
+        />
         <TableContainer>
           <Table
             sx={{ minWidth: 300 }}
@@ -276,17 +281,19 @@ const GrantedReadRequestsTable = () => {
               {stableSort(grantedReadRequests, getComparator(order, orderBy))
                 .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                 .map((row, index) => {
-                  const isItemSelected = isSelected(row.name);
+                  const isItemSelected = isSelected(row.id);
                   const labelId = `enhanced-table-checkbox-${index}`;
 
                   return (
                     <TableRow
                       hover
-                      onClick={(event) => handleClick(event, row.name)}
+                      onClick={(event) =>
+                        handleClick(event, row.id, row.ethAddress)
+                      }
                       role="checkbox"
                       aria-checked={isItemSelected}
                       tabIndex={-1}
-                      key={row.name}
+                      key={row.id}
                       selected={isItemSelected}
                     >
                       <TableCell padding="checkbox">
