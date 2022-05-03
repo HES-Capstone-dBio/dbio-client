@@ -11,7 +11,7 @@ import Checkbox from "@mui/material/Checkbox";
 import { useSelector, useDispatch } from "react-redux";
 import { accessControlSelector } from "../../store/AccessControlSlice";
 import { updateReadRequest } from "../../actions/AccessControlActions";
-import { getComparator, stableSort } from "./TableUtils";
+import { getComparator, stableSort } from "../../Utils/TableUtils";
 import GrantedTableToolbar from "./GrantedTableToolbar";
 import GrantedTableHead from "./GrantedTableHead";
 
