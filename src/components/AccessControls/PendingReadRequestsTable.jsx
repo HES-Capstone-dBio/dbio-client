@@ -93,7 +93,7 @@ const PendingReadRequestsTable = () => {
     <Box sx={{ width: "100%" }}>
       <Paper sx={{ width: "100%", mb: 2 }}>
         <PendingTableToolbar
-          tableTitle="Pending Write Requests"
+          tableTitle="Pending Read Requests"
           numSelected={selected.length}
           deleteRequestHandler={deleteRequestHandler}
           approveRequestHandler={approveRequestHandler}
