@@ -1,33 +1,32 @@
 import { createAsyncThunk } from "@reduxjs/toolkit";
 import * as resourceAPI from "../api/ResourceAPI";
 import * as ironcoreAPI from "../api/IroncoreAPI";
+import store from "../store";
 
 /**
  * Async thunk action creator to get all resources available to user.
  */
-export const listResources = createAsyncThunk(
-  "resources/list",
+export const listClaimedResources = createAsyncThunk(
+  "resources/listClaimed",
   async (args, thunkAPI) => {
-    const ethAddress = thunkAPI.getState().user.ethAddress;
     try {
-      const resources = await resourceAPI.listResources(ethAddress);
+      const ethAddress = store.getState().user.ethAddress;
+
+      const resources = await resourceAPI.listClaimedResources(ethAddress);
 
       //Convert the array of resources into an object from resource ID -> resource
-      const mappedResources = resources
-        .map((resource) => {
-          return {
-            title: resource.resource_title,
-            id: resource.fhir_resource_id,
-            ironcoreDocumentId: resource.ironcore_document_id,
-            created: resource.timestamp,
-          };
-        })
-        .reduce((resourcesByID, resource) => {
-          resourcesByID[resource.id] = resource;
-          return resourcesByID;
-        }, {});
+      const mappedResources = resources.map((resource) => {
+        return {
+          id: resource.fhir_resource_id,
+          ironcoreDocumentId: resource.ironcore_document_id,
+          creatorEthAddress: resource.creator_eth_address,
+          resourceType: resource.fhir_resource_type,
+          ipfsCid: resource.ipfs_cid,
+          createdTime: new Date(resource.timestamp).toLocaleDateString(),
+        };
+      });
 
-      return { resources: mappedResources };
+      return { claimedResources: mappedResources };
     } catch (e) {
       return thunkAPI.rejectWithValue("Unable to retrieve resource list.");
     }
@@ -35,17 +34,48 @@ export const listResources = createAsyncThunk(
 );
 
 /**
- * Async thunk action creator to get a specific resource with resourceID.
+ * Async thunk action creator to get all resources available to user.
  */
-export const getResource = createAsyncThunk(
-  "resources/get",
+export const listUnclaimedResources = createAsyncThunk(
+  "resources/listUnclaimed",
   async (args, thunkAPI) => {
-    const ethAddress = thunkAPI.getState().user.ethAddress;
-
     try {
+      const ethAddress = store.getState().user.ethAddress;
+
+      const resources = await resourceAPI.listUnclaimedResources(ethAddress);
+
+      // Remap array of objects from API
+      const mappedResources = resources.map((resource) => {
+        return {
+          id: resource.fhir_resource_id,
+          ironcoreDocumentId: resource.ironcore_document_id,
+          creatorEthAddress: resource.creator_eth_address,
+          resourceType: resource.fhir_resource_type,
+          createdTime: new Date(resource.timestamp).toLocaleDateString(),
+        };
+      });
+
+      return { unclaimedResources: mappedResources };
+    } catch (e) {
+      return thunkAPI.rejectWithValue("Unable to retrieve resource list.");
+    }
+  }
+);
+
+/**
+ * Async thunk action creator to get a specific claimed resource with resource ID.
+ */
+export const getClaimedResource = createAsyncThunk(
+  "resources/getClaimed",
+  async (args, thunkAPI) => {
+    try {
+      const ethAddress = store.getState().user.ethAddress;
+
       // Retrieve resource from protocol backend
-      const resource = await resourceAPI.getResource(
-        args.resourceID,
+      // Give resource ID and user's ethereum address
+      const resource = await resourceAPI.getClaimedResource(
+        args.id,
+        args.resourceType,
         ethAddress
       );
 
@@ -55,7 +85,7 @@ export const getResource = createAsyncThunk(
         ciphertext: resource.ciphertext,
       });
 
-      return { id: args.resourceID, body: decryptedResource.data };
+      return { id: args.id, body: decryptedResource.data };
     } catch (e) {
       return thunkAPI.rejectWithValue("Unable to get resource");
     }
@@ -63,33 +93,54 @@ export const getResource = createAsyncThunk(
 );
 
 /**
- * Thunk action creator for create resource.
+ * Thunk action creator to claim a resource
  */
-export const createResource = createAsyncThunk(
-  "resources/create",
+export const claimResource = createAsyncThunk(
+  "resources/claim",
   async (args, thunkAPI) => {
-    const ethAddress = thunkAPI.getState().user.ethAddress;
-    const userEmail = thunkAPI.getState().user.email;
-    const groupId = thunkAPI.getState().group.id;
-
     try {
-      // Encrypt the resource
-      const encryptedResource = await ironcoreAPI.encryptResource({
-        body: args.body,
-        title: args.title,
-        groupId,
-      });
+      const resources = args.resources;
+      const groupId = store.getState().accessControl.groupId;
+      const userEmail = store.getState().user.email;
+      const ethAddress = store.getState().user.ethAddress;
 
-      // Post the resource to protocol backend
-      await resourceAPI.createResource({
-        resourceTitle: encryptedResource.resourceTitle,
-        ethAddress,
-        userEmail,
-        ironcoreDocumentId: encryptedResource.ironcoreDocumentId,
-        ciphertext: encryptedResource.ciphertext,
-      });
+      for (const resource of resources) {
+        // Get the resource to be claimed
+        const unclaimedResource = await resourceAPI.getUnclaimedResource(
+          resource.fhirResourceId,
+          resource.resourceType,
+          ethAddress
+        );
+
+        // Attempt to decrypt the resource
+        const decryptedResource = await ironcoreAPI.decryptResource({
+          ironcoreDocumentId: unclaimedResource.ironcore_document_id,
+          ciphertext: unclaimedResource.ciphertext,
+        });
+
+        // Next reencrypt the resource to your own group
+        const encryptedResource = await ironcoreAPI.encryptResource({
+          body: decryptedResource.data,
+          title: unclaimedResource.fhir_resource_type,
+          groupId,
+        });
+
+        // Then post the claimed resource to the protocol server
+        await resourceAPI.createClaimedResource({
+          userEmail,
+          creatorEthAddress: resource.creatorEthAddress,
+          resourceType: resource.resourceType,
+          fhirResourceId: resource.fhirResourceId,
+          ironcoreDocumentId: encryptedResource.ironcoreDocumentId,
+          ciphertext: encryptedResource.ciphertext,
+        });
+      }
+
+      // Update resource lists
+      await thunkAPI.dispatch(listUnclaimedResources());
+      await thunkAPI.dispatch(listClaimedResources());
     } catch (e) {
-      return thunkAPI.rejectWithValue("Unable to create resource");
+      return thunkAPI.rejectWithValue("Unable to claim resource");
     }
   }
 );

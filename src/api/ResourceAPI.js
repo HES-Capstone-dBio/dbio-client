@@ -2,12 +2,12 @@ import axios from "axios";
 import { BACKEND_ENDPOINT } from "../constants/constants";
 
 /**
- * Get a list of resources from protocol API
+ * Get a list of claimed resources from protocol API
  */
-export const listResources = async (ethAddress) => {
+export const listClaimedResources = async (ethAddress) => {
   try {
     const response = await axios.get(
-      `${BACKEND_ENDPOINT}/dbio/resources/${ethAddress}`
+      `${BACKEND_ENDPOINT}/dbio/resources/claimed/${ethAddress}/${ethAddress}`
     );
 
     return response.data;
@@ -17,15 +17,52 @@ export const listResources = async (ethAddress) => {
 };
 
 /**
- * Get a specific resource from the protocol API
+ * Get a list of unclaimed from protocol API
  */
-export const getResource = async (resourceID, ethAddress) => {
+export const listUnclaimedResources = async (ethAddress) => {
   try {
     const response = await axios.get(
-      `${BACKEND_ENDPOINT}/dbio/resources/${ethAddress}/${resourceID}`
+      `${BACKEND_ENDPOINT}/dbio/resources/unclaimed/${ethAddress}/${ethAddress}`
     );
 
-    response.data.id = resourceID;
+    return response.data;
+  } catch (e) {
+    throw new Error("Failed to retrieve resource list.");
+  }
+};
+
+/**
+ * Get a specific claimed resource from the protocol API
+ */
+export const getClaimedResource = async (
+  fhirResourceId,
+  resourceType,
+  ethAddress
+) => {
+  try {
+    const response = await axios.get(
+      `${BACKEND_ENDPOINT}/dbio/resources/claimed/${ethAddress}/${resourceType}/${fhirResourceId}/${ethAddress}`
+    );
+
+    return response.data;
+  } catch (e) {
+    throw new Error("Failed to get resource.");
+  }
+};
+
+/**
+ * Get a specific unclaimed resource from the protocol API
+ */
+export const getUnclaimedResource = async (
+  fhirResourceId,
+  resourceType,
+  ethAddress
+) => {
+  try {
+    const response = await axios.get(
+      `${BACKEND_ENDPOINT}/dbio/resources/unclaimed/${ethAddress}/${resourceType}/${fhirResourceId}/${ethAddress}`
+    );
+
     return response.data;
   } catch (e) {
     throw new Error("Failed to get resource.");
@@ -35,28 +72,16 @@ export const getResource = async (resourceID, ethAddress) => {
 /**
  * Create a new resource and add to storage
  */
-export const createResource = async (payload) => {
+export const createClaimedResource = async (payload) => {
   const newResource = {
     ...payload,
-    // created: Date.now(),
   };
-  // Create a random ID to assign to this resource if it doesn't already have one
-  if (!newResource.fhirResourceId) {
-    newResource.fhirResourceId = Math.random().toString(36).slice(2);
-  }
-
-  // If there is no resource type assigned then assign "patient"
-  // by default
-  if (!newResource.resourceType) {
-    newResource.resourceType = "patient";
-  }
 
   try {
-    await axios.post(`${BACKEND_ENDPOINT}/dbio/resources`, {
+    await axios.post(`${BACKEND_ENDPOINT}/dbio/resources/claimed`, {
       email: newResource.userEmail,
-      creator_eth_address: newResource.ethAddress,
-      resource_type: newResource.resourceType,
-      resource_title: newResource.resourceTitle,
+      creator_eth_address: newResource.creatorEthAddress,
+      fhir_resource_type: newResource.resourceType,
       fhir_resource_id: newResource.fhirResourceId,
       ironcore_document_id: newResource.ironcoreDocumentId,
       ciphertext: newResource.ciphertext,
