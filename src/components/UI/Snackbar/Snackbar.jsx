@@ -7,20 +7,20 @@ let previous;
  * opacity/top rules correctly.
  */
 function dismissSnackbar(element, force) {
-    if (element) {
-        if (force) {
-            document.body.removeChild(element);
-        } else {
-            element.style.opacity = "0";
-            element.style.top = "0";
-        }
+  if (element) {
+    if (force) {
+      document.body.removeChild(element);
+    } else {
+      element.style.opacity = "0";
+      element.style.top = "0";
     }
+  }
 }
 
 function dismissAfterTimeout(item) {
-    if (item) {
-        dismissSnackbar(item, false);
-    }
+  if (item) {
+    dismissSnackbar(item, false);
+  }
 }
 
 /**
@@ -31,34 +31,39 @@ function dismissAfterTimeout(item) {
  * @param timeout Length in ms that snackbar will appear
  */
 const snackbar = (message, type = "success") => {
-    const timeout = type === "error" ? 4000 : 2000;
-    dismissSnackbar(previous, true);
-    const snackbar = document.createElement("div");
-    snackbar.className = `${classes.snackbar} ${classes[`snackbar-${type}`]}`;
-    snackbar.setAttribute("role", "alert");
-    //Adjust top position to account for the users scroll height
-    snackbar.style.top = `${window.scrollY}px`;
+  const timeout = type === "error" ? 4000 : 2000;
+  dismissSnackbar(previous, true);
+  const snackbar = document.createElement("div");
+  snackbar.className = `${classes.snackbar} ${classes[`snackbar-${type}`]}`;
+  snackbar.setAttribute("role", "alert");
+  //Adjust top position to account for the users scroll height
+  snackbar.style.top = `${window.scrollY}px`;
 
-    snackbar.appendChild(document.createTextNode(message));
+  snackbar.appendChild(document.createTextNode(message));
 
-    setTimeout(dismissAfterTimeout.bind(null, snackbar), timeout);
-    snackbar.addEventListener("transitionend", () => {
-        //Check if both transitions are complete before removing the element
-        if (previous && previous.style.opacity === "0" && previous.style.top === "0px") {
-            dismissSnackbar(previous, true);
-            previous = null;
-        }
-    });
+  setTimeout(dismissAfterTimeout.bind(null, snackbar), timeout);
+  snackbar.addEventListener("transitionend", () => {
+    //Check if both transitions are complete before removing the element
+    if (
+      previous &&
+      previous.style.opacity === "0" &&
+      previous.style.top === "0px"
+    ) {
+      dismissSnackbar(previous, true);
+      previous = null;
+    }
+  });
 
-    previous = snackbar;
-    document.body.appendChild(snackbar);
-    /* eslint-disable */
-    getComputedStyle(snackbar).top;
-    /* eslint-disable */
-    snackbar.style.top = `${document.getElementById("snackbar").parentNode.height}px`;
+  previous = snackbar;
+  document.body.appendChild(snackbar);
+  /* eslint-disable */
+  getComputedStyle(snackbar).top;
+  /* eslint-disable */
+  snackbar.style.top = `${
+    document.getElementById("snackbar").parentNode.height
+  }px`;
 
-
-    snackbar.style.opacity = "1";
+  snackbar.style.opacity = "1";
 };
 
 export default snackbar;

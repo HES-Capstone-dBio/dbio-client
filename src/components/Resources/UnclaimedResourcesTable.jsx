@@ -1,4 +1,6 @@
 import React, { useState } from "react";
+import PropTypes from "prop-types";
+import { alpha } from "@mui/material/styles";
 import Box from "@mui/material/Box";
 import Table from "@mui/material/Table";
 import TableBody from "@mui/material/TableBody";
@@ -6,18 +8,95 @@ import TableCell from "@mui/material/TableCell";
 import TableContainer from "@mui/material/TableContainer";
 import TablePagination from "@mui/material/TablePagination";
 import TableRow from "@mui/material/TableRow";
+import Toolbar from "@mui/material/Toolbar";
+import Typography from "@mui/material/Typography";
 import Paper from "@mui/material/Paper";
 import Checkbox from "@mui/material/Checkbox";
-import { useSelector, useDispatch } from "react-redux";
-import { accessControlSelector } from "../../store/AccessControlSlice";
-import { updateReadRequest } from "../../actions/AccessControlActions";
+import IconButton from "@mui/material/IconButton";
+import Tooltip from "@mui/material/Tooltip";
+import { useDispatch, useSelector } from "react-redux";
 import { getComparator, stableSort } from "../../Utils/TableUtils";
-import GrantedTableToolbar from "./GrantedTableToolbar";
-import GrantedTableHead from "./GrantedTableHead";
+import ResourcesTableHead from "./ResourcesTableHead";
+import { resourcesSelector } from "../../store/ResourcesSlice";
+import CheckCircle from "@mui/icons-material/CheckCircle";
+import { claimResource } from "../../actions/ResourceActions";
 
-const GrantedReadRequestsTable = () => {
+const headCells = [
+  {
+    id: "resourceType",
+    numeric: false,
+    label: "Record Type",
+  },
+  {
+    id: "creatorEthAddress",
+    numeric: false,
+    label: "Creator Ethereum Address",
+  },
+  {
+    id: "createdTime",
+    numeric: false,
+    label: "Date Created",
+  },
+];
+
+const EnhancedTableToolbar = (props) => {
+  const { numSelected } = props;
+
+  return (
+    <Toolbar
+      sx={{
+        pl: { sm: 2 },
+        pr: { xs: 1, sm: 1 },
+        ...(numSelected > 0
+          ? {
+              bgcolor: (theme) =>
+                alpha(
+                  theme.palette.primary.main,
+                  theme.palette.action.activatedOpacity
+                ),
+            }
+          : {
+              bgcolor: "rgba(69, 63, 181, 0.35)",
+            }),
+      }}
+    >
+      {numSelected > 0 ? (
+        <Typography
+          sx={{ flex: "1 1 100%" }}
+          color="inherit"
+          variant="subtitle1"
+          component="div"
+        >
+          {numSelected} selected
+        </Typography>
+      ) : (
+        <Typography
+          sx={{ flex: "1 1 100%" }}
+          variant="h6"
+          id="tableTitle"
+          component="div"
+        >
+          {props.tableTitle}
+        </Typography>
+      )}
+      {numSelected > 0 && (
+        <Tooltip title="Claim Record">
+          <IconButton onClick={props.claimResourceHandler}>
+            <CheckCircle />
+          </IconButton>
+        </Tooltip>
+      )}
+    </Toolbar>
+  );
+};
+
+EnhancedTableToolbar.propTypes = {
+  numSelected: PropTypes.number.isRequired,
+};
+
+const ResourcesTable = (props) => {
   const dispatch = useDispatch();
-  const { grantedReadRequests } = useSelector(accessControlSelector);
+  const { unclaimedResources } = useSelector(resourcesSelector);
 
   const [order, setOrder] = useState("asc");
   const [orderBy, setOrderBy] = useState("createdTime");
@@ -33,8 +112,12 @@ const GrantedReadRequestsTable = () => {
 
   const handleSelectAllClick = (event) => {
     if (event.target.checked) {
-      const newSelecteds = grantedReadRequests.map((n) => {
-        return { id: n.id, ethAddress: n.ethAddress };
+      const newSelecteds = unclaimedResources.map((n) => {
+        return {
+          id: n.id,
+          creatorEthAddress: n.creatorEthAddress,
+          resourceType: n.resourceType,
+        };
       });
       setSelected(newSelecteds);
       return;
@@ -42,12 +125,16 @@ const GrantedReadRequestsTable = () => {
     setSelected([]);
   };
 
-  const handleClick = (event, id, ethAddress) => {
+  const handleClick = (event, id, creatorEthAddress, resourceType) => {
     const selectedIndex = selected.map((e) => e.id).indexOf(id);
     let newSelected = [];
 
     if (selectedIndex === -1) {
-      newSelected = newSelected.concat(selected, { id, ethAddress });
+      newSelected = newSelected.concat(selected, {
+        id,
+        creatorEthAddress,
+        resourceType,
+      });
     } else if (selectedIndex === 0) {
       newSelected = newSelected.concat(selected.slice(1));
     } else if (selectedIndex === selected.length - 1) {
@@ -71,8 +158,18 @@ const GrantedReadRequestsTable = () => {
     setPage(0);
   };
 
-  const deleteRequestHandler = () => {
-    dispatch(updateReadRequest({ requests: selected, approve: false }));
+  const claimResourceHandler = () => {
+    // Remap resources to claim
+    const resourcesToClaim = selected.map((resource) => {
+      return {
+        fhirResourceId: resource.id,
+        resourceType: resource.resourceType,
+        creatorEthAddress: resource.creatorEthAddress,
+      };
+    });
+
+    dispatch(claimResource({ resources: resourcesToClaim }));
+
     setSelected([]);
   };
 
@@ -81,35 +178,37 @@ const GrantedReadRequestsTable = () => {
   // Avoid a layout jump when reaching the last page with empty rows.
   const emptyRows =
     page > 0
-      ? Math.max(0, (1 + page) * rowsPerPage - grantedReadRequests.length)
+      ? Math.max(0, (1 + page) * rowsPerPage - unclaimedResources.length)
       : 0;
 
   return (
     <Box sx={{ width: "100%" }}>
       <Paper sx={{ width: "100%", mb: 2 }}>
-        <GrantedTableToolbar
-          tableTitle="Granted Read Requests"
+        <EnhancedTableToolbar
+          tableTitle="Unclaimed Records"
           numSelected={selected.length}
-          deleteRequestHandler={deleteRequestHandler}
+          claimResourceHandler={claimResourceHandler}
         />
         <TableContainer>
           <Table
             sx={{ minWidth: 300 }}
             aria-labelledby="tableTitle"
-            size="small"
+            size="medium"
           >
-            <GrantedTableHead
+            <ResourcesTableHead
+              headCells={headCells}
               numSelected={selected.length}
               order={order}
               orderBy={orderBy}
               onSelectAllClick={handleSelectAllClick}
               onRequestSort={handleRequestSort}
-              rowCount={grantedReadRequests.length}
+              rowCount={unclaimedResources.length}
+              tableType="unclaimed"
             />
             <TableBody>
               {/* if you don't need to support IE11, you can replace the `stableSort` call with:
                  rows.slice().sort(getComparator(order, orderBy)) */}
-              {stableSort(grantedReadRequests, getComparator(order, orderBy))
+              {stableSort(unclaimedResources, getComparator(order, orderBy))
                 .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                 .map((row, index) => {
                   const isItemSelected = isSelected(row.id);
@@ -119,7 +218,12 @@ const GrantedReadRequestsTable = () => {
                     <TableRow
                       hover
                       onClick={(event) =>
-                        handleClick(event, row.id, row.ethAddress)
+                        handleClick(
+                          event,
+                          row.id,
+                          row.creatorEthAddress,
+                          row.resourceType
+                        )
                       }
                       role="checkbox"
                       aria-checked={isItemSelected}
@@ -137,11 +241,12 @@ const GrantedReadRequestsTable = () => {
                         />
                       </TableCell>
                       <TableCell component="th" id={labelId} scope="row">
-                        {row.name}
+                        {row.resourceType}
                       </TableCell>
-                      <TableCell align="left">{row.ethAddress}</TableCell>
+                      <TableCell align="left">
+                        {row.creatorEthAddress}
+                      </TableCell>
                       <TableCell align="left">{row.createdTime}</TableCell>
-                      <TableCell align="left">{row.grantedTime}</TableCell>
                     </TableRow>
                   );
                 })}
@@ -160,7 +265,7 @@ const GrantedReadRequestsTable = () => {
         <TablePagination
           rowsPerPageOptions={[5, 10, 25]}
           component="div"
-          count={grantedReadRequests.length}
+          count={unclaimedResources.length}
           rowsPerPage={rowsPerPage}
           page={page}
           onPageChange={handleChangePage}
@@ -171,4 +276,4 @@ const GrantedReadRequestsTable = () => {
   );
 };
 
-export default GrantedReadRequestsTable;
+export default ResourcesTable;

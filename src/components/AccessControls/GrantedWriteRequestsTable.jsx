@@ -11,7 +11,7 @@ import Checkbox from "@mui/material/Checkbox";
 import { useSelector, useDispatch } from "react-redux";
 import { accessControlSelector } from "../../store/AccessControlSlice";
 import { updateWriteRequest } from "../../actions/AccessControlActions";
-import { getComparator, stableSort } from "./TableUtils";
+import { getComparator, stableSort } from "../../Utils/TableUtils";
 import GrantedTableHead from "./GrantedTableHead";
 import GrantedTableToolbar from "./GrantedTableToolbar";
 
@@ -20,7 +20,7 @@ const GrantedWriteRequestsTable = () => {
   const { grantedWriteRequests } = useSelector(accessControlSelector);
 
   const [order, setOrder] = useState("asc");
-  const [orderBy, setOrderBy] = useState("calories");
+  const [orderBy, setOrderBy] = useState("createdTime");
   const [selected, setSelected] = useState([]);
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(5);

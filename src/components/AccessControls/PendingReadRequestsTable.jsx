@@ -11,7 +11,7 @@ import Checkbox from "@mui/material/Checkbox";
 import { useSelector, useDispatch } from "react-redux";
 import { accessControlSelector } from "../../store/AccessControlSlice";
 import { updateReadRequest } from "../../actions/AccessControlActions";
-import { stableSort, getComparator } from "./TableUtils";
+import { stableSort, getComparator } from "../../Utils/TableUtils";
 import PendingTableHead from "./PendingTableHead";
 import PendingTableToolbar from "./PendingTableToolbar";
 
@@ -20,7 +20,7 @@ const PendingReadRequestsTable = () => {
 
   const { pendingReadRequests } = useSelector(accessControlSelector);
   const [order, setOrder] = useState("asc");
-  const [orderBy, setOrderBy] = useState("calories");
+  const [orderBy, setOrderBy] = useState("createdTime");
   const [selected, setSelected] = useState([]);
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(5);

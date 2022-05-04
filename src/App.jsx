@@ -13,10 +13,10 @@ import ProtectedRoute from "./auth/ProtectedRoute";
 import NotFound from "./pages/NotFound";
 import { useAuth0 } from "@auth0/auth0-react";
 import Loading from "./components/Layout/Loading";
+import RecordDetails from "./pages/RecordDetails";
 
 const App = () => {
-  const { isFetching, isLoggedIn, isError } =
-    useSelector(userSelector);
+  const { isFetching, isLoggedIn, isError } = useSelector(userSelector);
 
   const { isAuthenticated, isLoading, error, getIdTokenClaims, logout } =
     useAuth0();
@@ -63,10 +63,18 @@ const App = () => {
         <Route exact path="/">
           {isAuthenticated ? <Redirect to="/home" /> : <Landing />}
         </Route>
-        <ProtectedRoute path="/home" component={Home} />
-        <ProtectedRoute path="/records" component={Records} />
-        <ProtectedRoute path="/records/:recordId" component={Records} />
-        <ProtectedRoute path="/access-control" component={AccessControl} />
+        <ProtectedRoute exact path="/home" component={Home} />
+        <ProtectedRoute exact path="/records" component={Records} />
+        <ProtectedRoute
+          exact
+          path="/records/:recordId"
+          component={RecordDetails}
+        />
+        <ProtectedRoute
+          exact
+          path="/access-control"
+          component={AccessControl}
+        />
         <Route path="*" component={NotFound} />
       </Switch>
     </Layout>
