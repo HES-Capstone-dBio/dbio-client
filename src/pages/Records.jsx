@@ -27,7 +27,6 @@ const Records = () => {
         <Grid item xs={12} md={12}>
           <ClaimedResourcesTable />
         </Grid>
-        {isClaimingResource && <LinearProgress />}
         <Grid item xs={12} md={12}>
           <UnclaimedResourcesTable />
         </Grid>
