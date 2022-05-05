@@ -85,7 +85,7 @@ export const getClaimedResource = createAsyncThunk(
         ciphertext: resource.ciphertext,
       });
 
-      return { id: args.id, body: decryptedResource.data };
+      return { id: args.id, body: JSON.parse(decryptedResource.data) };
     } catch (e) {
       return thunkAPI.rejectWithValue("Unable to get resource");
     }

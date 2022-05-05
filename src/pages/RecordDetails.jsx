@@ -3,10 +3,13 @@ import { useDispatch, useSelector } from "react-redux";
 import { getClaimedResource } from "../actions/ResourceActions";
 import { resourcesSelector, resourcesActions } from "../store/ResourcesSlice";
 import NotFound from "./NotFound";
+import Loading from "../components/Layout/Loading";
+import JSONPretty from "react-json-pretty";
+import { AppBar, Divider, Typography, Toolbar } from "@mui/material";
 
 const RecordDetails = () => {
   const dispatch = useDispatch();
-  const { claimedResources, currentResourceBody } =
+  const { claimedResources, currentResourceBody, isFetchingResource } =
     useSelector(resourcesSelector);
 
   // @TODO Fix this, HACKY! This is a hacky way to get around using
@@ -38,12 +41,26 @@ const RecordDetails = () => {
     };
   }, [claimedResource, dispatch]);
 
+  if (isFetchingResource) {
+    return <Loading />;
+  }
+
   // Render the record with the passed in ID
   return (
     <Fragment>
-      <h1>Record Details</h1>
-      <p>{recordId}</p>
-      <p>{currentResourceBody}</p>
+      <AppBar position="static" sx={{ bgcolor: "rgba(69, 63, 181, 0.35)" }}>
+        <Toolbar>
+          <Typography fontSize="1.4rem" color="black" fontWeight="500">
+            Record Details
+          </Typography>{" "}
+        </Toolbar>
+      </AppBar>
+      <Divider />
+      <JSONPretty
+        className="recordDetails"
+        data={currentResourceBody}
+        style={{ fontSize: "1.1em" }}
+      />
     </Fragment>
   );
 };
