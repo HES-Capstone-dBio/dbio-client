@@ -2,7 +2,9 @@ import { createAsyncThunk } from "@reduxjs/toolkit";
 import * as resourceAPI from "../api/ResourceAPI";
 import * as ironcoreAPI from "../api/IroncoreAPI";
 import store from "../store";
-
+import { JsonRpcProvider } from '@ethersproject/providers'
+import { ethers } from 'ethers';
+import dBioContract1155 from "../abi/DBioContract1155.abi.json";
 /**
  * Async thunk action creator to get all resources available to user.
  */
@@ -153,3 +155,88 @@ export const clearResourcesState = () => {
     type: "resources/clearResourcesState",
   };
 };
+
+/**
+ * Mints a single NFT
+ */
+export const mintNFT = async (ethKey, NFTVoucher) => {
+
+  //Create a provider to connect to a testnet (Rinkeby) through Infura endpoint
+  const rinkeby = new JsonRpcProvider(
+    'https://rinkeby.infura.io/v3/3e19d71d0a034a7fbbf60362f83b3be2', //should be an env variable
+    'rinkeby'
+  );
+
+  // Initiate the user's wallet
+  let wallet = new ethers.Wallet(ethKey)
+  wallet = wallet.connect(rinkeby) //connect the wallet to the network
+  let address = await wallet.getAddress()
+
+  //Example NFT voucher
+  // {
+  //   uri: "https://ipfs.io/ipfs/bafybeigdyrzt5sfp7udm7hu76uh7y26nf3efuylqabf3oclgtqy65fbzdi",
+  //   signature: "0x74acd2dc5ca48ab9fbe6fa564927a33053069ad7213cff8f45af23738f25284e4ddb95477447f01c7139f43ff0c78434d0b6fa55bca238c806340ae981af8f8a1c"
+  // }
+
+  //Initiate the contract using the Contract address, ABI, and the wallet of the user 
+  var contract = new ethers.Contract(
+    "0xEdd57d64f68D11cEF21bAacBfbcDE308DC1bF828",
+    dBioContract1155,
+    wallet);
+
+  //Overrides for estimating the gas cost and nonce; need to be programmatic
+  const overrides = {
+    nonce: 12,
+    gasLimit: "29999972",
+    gasPrice: "2999997200"
+  }
+
+  //Initiate the transaction on the network
+  let receipt = await contract.functions.redeem(address, NFTVoucher, overrides);
+  console.log(receipt);
+
+}
+
+/**
+ * Mints multiple NFTs
+ */
+export const mintManyNFT = async (ethKey, NFTVouchers) => {
+
+  //Create a provider to connect to a testnet (Rinkeby) through Infura endpoint
+  const rinkeby = new JsonRpcProvider(
+    'https://rinkeby.infura.io/v3/3e19d71d0a034a7fbbf60362f83b3be2', //should be an env variable
+    'rinkeby'
+  );
+
+  // Initiate the user's wallet
+  let wallet = new ethers.Wallet(ethKey)
+  wallet = wallet.connect(rinkeby) //connect the wallet to the network
+  let address = await wallet.getAddress()
+
+  //Example NFT voucher array
+  // [{
+  //   uri: "https://ipfs.io/ipfs/bafybeigdyrzt5sfp7udm7hu76uh7y26nf3efuylqabf3oclgtqy65fbzdi",
+  //   signature: "0x74acd2dc5ca48ab9fbe6fa564927a33053069ad7213cff8f45af23738f25284e4ddb95477447f01c7139f43ff0c78434d0b6fa55bca238c806340ae981af8f8a1c"
+  // },{
+  //   uri: "https://ipfs.io/ipfs/bafybeigdyrzt5sfp7udm7hu76uh7y26nf3efuylqabf3oclgtqy65fbzdi",
+  //   signature: "0x74acd2dc5ca48ab9fbe6fa564927a33053069ad7213cff8f45af23738f25284e4ddb95477447f01c7139f43ff0c78434d0b6fa55bca238c806340ae981af8f8a1c"
+  // }]
+
+  //Initiate the contract using the Contract address, ABI, and the wallet of the user 
+  var contract = new ethers.Contract(
+    "0xEdd57d64f68D11cEF21bAacBfbcDE308DC1bF828",
+    dBioContract1155,
+    wallet);
+
+  //Overrides for estimating the gas cost and nonce; need to be programmatic
+  const overrides = {
+    nonce: 12,
+    gasLimit: "29999972",
+    gasPrice: "2999997200"
+  }
+
+  //Initiate the transaction on the network
+  let receipt = await contract.functions.redeemMany(address, NFTVouchers, overrides);
+  console.log(receipt);
+
+}
