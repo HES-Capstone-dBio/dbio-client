@@ -17,6 +17,7 @@
   transition-duration: 0.4s;
   transition-property: opacity, top;
   width: 100%;
+  z-index: 1400;
 }
 
 .snackbar-success {
