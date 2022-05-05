@@ -33,6 +33,16 @@ const headCells = [
     label: "Date Created",
   },
   {
+    id: "ipfs",
+    numeric: false,
+    label: "IPFS Link",
+  },
+  {
+    id: "mintNft",
+    numeric: false,
+    label: "Mint NFT"
+  },
+  {
     id: "viewButton",
     numeric: false,
     label: "View Record",
@@ -82,6 +92,10 @@ const ResourcesTable = (props) => {
     setPage(0);
   };
 
+  const mintNftClickHandler = () => {
+    console.log("Minting NFT");
+  }
+
   // Avoid a layout jump when reaching the last page with empty rows.
   const emptyRows =
     page > 0
@@ -123,6 +137,24 @@ const ResourcesTable = (props) => {
                         {row.creatorEthAddress}
                       </TableCell>
                       <TableCell align="left">{row.createdTime}</TableCell>
+                      <TableCell>
+                        <Button
+                          href={`https://ipfs.io/ipfs/${row.ipfsCid}`}
+                          variant="contained"
+                          size="small"
+                        >
+                          View IPFS
+                        </Button>
+                      </TableCell>
+                      <TableCell>
+                        <Button
+                          variant="contained"
+                          size="small"
+                          onClick={mintNftClickHandler}
+                        >
+                          Mint NFT
+                        </Button>
+                      </TableCell>
                       <TableCell>
                         <Button
                           component={RouterLink}

@@ -79,7 +79,7 @@ const Landing = () => {
               },
             }}
           >
-            Log In or Sign Up for dBio Today
+            Get Started with dBio Today
           </Typography>
           <Login />
           <Divider />

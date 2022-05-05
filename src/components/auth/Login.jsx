@@ -22,7 +22,7 @@ const Login = () => {
         minHeight: "3em",
       }}
     >
-      Login/Sign up
+      Login/Sign Up
     </Button>
   );
 };
