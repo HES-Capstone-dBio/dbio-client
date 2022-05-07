@@ -86,8 +86,9 @@ export const loginUser = createAsyncThunk(
         privateKey: privateKey,
       };
     } catch (e) {
-      console.log(e.message);
-      return thunkAPI.rejectWithValue("Unable to log into dBio.");
+      return thunkAPI.rejectWithValue({
+        message: "Unable to log into dBio at this time.",
+      });
     }
   }
 );
@@ -111,8 +112,9 @@ export const logoutUser = createAsyncThunk(
       await thunkAPI.dispatch(clearResourcesState());
       await thunkAPI.dispatch(clearUIState());
     } catch (e) {
-      console.log(e.message);
-      return thunkAPI.rejectWithValue("Error logging out of dBio.");
+      return thunkAPI.rejectWithValue({
+        message: "Error logging out of dBio.",
+      });
     }
   }
 );

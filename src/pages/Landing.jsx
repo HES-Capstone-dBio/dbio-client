@@ -7,16 +7,19 @@ import showSnackbar from "../components/UI/Snackbar/Snackbar";
 import web3 from "../assets/decentralized.svg";
 import record from "../assets/landingrecord.svg";
 import security from "../assets/security.svg";
+import store from "../store";
 
 const Landing = () => {
   const { isLoggedIn, isError } = useSelector(userSelector);
   const { isAuthenticated } = useAuth0();
 
+  const errorMessage = store.getState().user.errorMessage;
+
   if ((!isAuthenticated && isLoggedIn) || (!isAuthenticated && isError)) {
     localStorage.clear();
     sessionStorage.clear();
     if (isError) {
-      showSnackbar("Unable to log into dBio at this time", "error");
+      showSnackbar(`${errorMessage}`, "error");
     }
   }
 

@@ -20,7 +20,7 @@ export const setGroup = createAsyncThunk(
  */
 export const listGrantedWriteRequests = createAsyncThunk(
   "accessControl/grantedWriteRequestsList",
-  async (thunkAPI) => {
+  async (args, thunkAPI) => {
     try {
       const ethAddress = store.getState().user.ethAddress;
 
@@ -51,14 +51,16 @@ export const listGrantedWriteRequests = createAsyncThunk(
         grantedWriteRequests,
       };
     } catch (e) {
-      return thunkAPI.rejectWithValue("Unable to retrieve write requests");
+      return thunkAPI.rejectWithValue({
+        message: "Unable to retrieve granted write requests",
+      });
     }
   }
 );
 
 export const listPendingWriteRequests = createAsyncThunk(
   "accessControl/pendingWriteRequestList",
-  async (thunkAPI) => {
+  async (args, thunkAPI) => {
     try {
       const ethAddress = store.getState().user.ethAddress;
 
@@ -85,7 +87,9 @@ export const listPendingWriteRequests = createAsyncThunk(
         pendingWriteRequests,
       };
     } catch (e) {
-      return thunkAPI.rejectWithValue("Unable to retrieve write requests");
+      return thunkAPI.rejectWithValue({
+        message: "Unable to retrieve pending write requests",
+      });
     }
   }
 );
@@ -96,7 +100,7 @@ export const listPendingWriteRequests = createAsyncThunk(
  */
 export const listGrantedReadRequests = createAsyncThunk(
   "accessControl/grantedReadRequestList",
-  async (thunkAPI) => {
+  async (args, thunkAPI) => {
     try {
       const ethAddress = store.getState().user.ethAddress;
 
@@ -123,7 +127,9 @@ export const listGrantedReadRequests = createAsyncThunk(
         grantedReadRequests,
       };
     } catch (e) {
-      return thunkAPI.rejectWithValue("Unable to retrieve read requests");
+      return thunkAPI.rejectWithValue({
+        message: "Unable to retrieve granted read requests",
+      });
     }
   }
 );
@@ -134,7 +140,7 @@ export const listGrantedReadRequests = createAsyncThunk(
  */
 export const listPendingReadRequests = createAsyncThunk(
   "accessControl/pendingReadRequestList",
-  async (thunkAPI) => {
+  async (args, thunkAPI) => {
     try {
       const ethAddress = store.getState().user.ethAddress;
 
@@ -160,7 +166,9 @@ export const listPendingReadRequests = createAsyncThunk(
         pendingReadRequests,
       };
     } catch (e) {
-      return thunkAPI.rejectWithValue("Unable to retrieve read requests");
+      return thunkAPI.rejectWithValue({
+        message: "Unable to retrieve pending read requests",
+      });
     }
   }
 );
@@ -206,8 +214,9 @@ export const updateReadRequest = createAsyncThunk(
       await thunkAPI.dispatch(listPendingReadRequests());
       await thunkAPI.dispatch(listGrantedReadRequests());
     } catch (e) {
-      console.log(e);
-      return thunkAPI.rejectWithValue("Unable to update read request");
+      return thunkAPI.rejectWithValue({
+        message: "Unable to update read request",
+      });
     }
   }
 );
@@ -231,7 +240,9 @@ export const updateWriteRequest = createAsyncThunk(
       await thunkAPI.dispatch(listPendingWriteRequests());
       await thunkAPI.dispatch(listGrantedWriteRequests());
     } catch (e) {
-      return thunkAPI.rejectWithValue("Unable to grant write request");
+      return thunkAPI.rejectWithValue({
+        message: "Unable to grant write request",
+      });
     }
   }
 );

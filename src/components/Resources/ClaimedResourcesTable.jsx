@@ -15,6 +15,8 @@ import { getComparator, stableSort } from "../../Utils/TableUtils";
 import ResourcesTableHead from "./ResourcesTableHead";
 import { Link as RouterLink } from "react-router-dom";
 import { resourcesSelector } from "../../store/ResourcesSlice";
+import showSnackbar from "../UI/Snackbar/Snackbar";
+import store from "../../store";
 
 const headCells = [
   {
@@ -66,6 +68,12 @@ const ResourcesTable = (props) => {
   const [orderBy, setOrderBy] = useState("createdTime");
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(5);
+  const { isError: resourceError, errorMessage: resourceErrorMessage } =
+    store.getState().resources;
+
+  if (resourceError) {
+    showSnackbar(`${resourceErrorMessage}`, "error");
+  }
 
   const handleRequestSort = (event, property) => {
     const isAsc = orderBy === property && order === "asc";

@@ -20,6 +20,8 @@ import ResourcesTableHead from "./ResourcesTableHead";
 import { resourcesSelector } from "../../store/ResourcesSlice";
 import CheckCircle from "@mui/icons-material/CheckCircle";
 import { claimResource } from "../../actions/ResourceActions";
+import showSnackbar from "../UI/Snackbar/Snackbar";
+import store from "../../store";
 
 const headCells = [
   {
@@ -103,6 +105,12 @@ const ResourcesTable = (props) => {
   const [selected, setSelected] = useState([]);
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(5);
+  const { isError: resourceError, errorMessage: resourceErrorMessage } =
+    store.getState().resources;
+
+  if (resourceError) {
+    showSnackbar(`${resourceErrorMessage}`, "error");
+  }
 
   const handleRequestSort = (event, property) => {
     const isAsc = orderBy === property && order === "asc";

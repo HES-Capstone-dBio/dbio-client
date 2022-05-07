@@ -17,7 +17,6 @@ export const getGroupDetails = async (userEmail) => {
       // Group doesn't exist so create it
       return IronWeb.group.create({ groupId: `dbio-test-${userEmail}` });
     } catch (e) {
-      console.log(e.message);
       throw new Error("Unable to create IronCore group.");
     }
   }
