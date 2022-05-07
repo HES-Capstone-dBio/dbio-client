@@ -22,15 +22,15 @@ export const listClaimedResources = createAsyncThunk(
           creatorEthAddress: resource.creator_eth_address,
           resourceType: resource.fhir_resource_type,
           ipfsCid: resource.ipfs_cid,
+          ethNftVoucher: resource.eth_nft_voucher,
+          nftMinted: resource.nft_minted,
           createdTime: new Date(resource.timestamp).toLocaleDateString(),
         };
       });
 
       return { claimedResources: mappedResources };
     } catch (e) {
-      return thunkAPI.rejectWithValue({
-        message: "Unable to retrieve resource list.",
-      });
+      return thunkAPI.rejectWithValue("Unable to retrieve resource list.");
     }
   }
 );
@@ -59,9 +59,7 @@ export const listUnclaimedResources = createAsyncThunk(
 
       return { unclaimedResources: mappedResources };
     } catch (e) {
-      return thunkAPI.rejectWithValue({
-        message: "Unable to retrieve resource list.",
-      });
+      return thunkAPI.rejectWithValue("Unable to retrieve resource list.");
     }
   }
 );
@@ -91,7 +89,7 @@ export const getClaimedResource = createAsyncThunk(
 
       return { id: args.id, body: JSON.parse(decryptedResource.data) };
     } catch (e) {
-      return thunkAPI.rejectWithValue({ message: "Unable to get resource" });
+      return thunkAPI.rejectWithValue("Unable to get resource");
     }
   }
 );
@@ -144,7 +142,21 @@ export const claimResource = createAsyncThunk(
       await thunkAPI.dispatch(listUnclaimedResources());
       await thunkAPI.dispatch(listClaimedResources());
     } catch (e) {
-      return thunkAPI.rejectWithValue({ message: "Unable to claim resource" });
+      return thunkAPI.rejectWithValue("Unable to claim resource");
+    }
+  }
+);
+
+/**
+ * Async thunk action creator to mint a single NFT associated with a resource.
+ */
+export const mintNFT = createAsyncThunk(
+  "resources/mintNft",
+  async (args, thunkAPI) => {
+    try {
+      // Async code to attempt to mint a single NFT here
+    } catch (e) {
+      return thunkAPI.rejectWithValue({ message: "Unable to mind NFT" });
     }
   }
 );

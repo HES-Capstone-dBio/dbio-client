@@ -10,13 +10,14 @@ import Toolbar from "@mui/material/Toolbar";
 import Typography from "@mui/material/Typography";
 import Paper from "@mui/material/Paper";
 import Button from "@mui/material/Button";
-import { useSelector } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
 import { getComparator, stableSort } from "../../Utils/TableUtils";
 import ResourcesTableHead from "./ResourcesTableHead";
 import { Link as RouterLink } from "react-router-dom";
 import { resourcesSelector } from "../../store/ResourcesSlice";
 import showSnackbar from "../UI/Snackbar/Snackbar";
 import store from "../../store";
+import { mintNFT } from "../../actions/ResourceActions";
 
 const headCells = [
   {
@@ -80,6 +81,7 @@ const ResourcesTable = (props) => {
   const [rowsPerPage, setRowsPerPage] = useState(5);
   const { isError: resourceError, errorMessage: resourceErrorMessage } =
     store.getState().resources;
+  const dispatch = useDispatch();
 
   if (resourceError) {
     showSnackbar(`${resourceErrorMessage}`, "error");
@@ -101,7 +103,7 @@ const ResourcesTable = (props) => {
   };
 
   const mintNftClickHandler = () => {
-    console.log("Minting NFT");
+    dispatch(mintNFT());
   }
 
   // Avoid a layout jump when reaching the last page with empty rows.
