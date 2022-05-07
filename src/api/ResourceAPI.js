@@ -12,7 +12,7 @@ export const listClaimedResources = async (ethAddress) => {
 
     return response.data;
   } catch (e) {
-    throw new Error("Failed to retrieve resource list.");
+    throw new Error("Failed to retrieve claimed resource list.");
   }
 };
 
@@ -27,7 +27,7 @@ export const listUnclaimedResources = async (ethAddress) => {
 
     return response.data;
   } catch (e) {
-    throw new Error("Failed to retrieve resource list.");
+    throw new Error("Failed to retrieve resource unclaimed list.");
   }
 };
 
@@ -46,7 +46,7 @@ export const getClaimedResource = async (
 
     return response.data;
   } catch (e) {
-    throw new Error("Failed to get resource.");
+    throw new Error("Failed to get claimed resource.");
   }
 };
 
@@ -65,7 +65,7 @@ export const getUnclaimedResource = async (
 
     return response.data;
   } catch (e) {
-    throw new Error("Failed to get resource.");
+    throw new Error("Failed to get unclaimed resource.");
   }
 };
 

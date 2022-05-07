@@ -13,7 +13,6 @@ export const listReadRequests = async (ethAddress) => {
 
     return response.data;
   } catch (e) {
-    console.log(e.message);
     throw new Error("Failed to retrieve read requests from server.");
   }
 };

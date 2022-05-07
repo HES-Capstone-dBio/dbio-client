@@ -14,6 +14,8 @@ import { updateReadRequest } from "../../actions/AccessControlActions";
 import { stableSort, getComparator } from "../../Utils/TableUtils";
 import PendingTableHead from "./PendingTableHead";
 import PendingTableToolbar from "./PendingTableToolbar";
+import store from "../../store";
+import showSnackbar from "../UI/Snackbar/Snackbar";
 
 const PendingReadRequestsTable = () => {
   const dispatch = useDispatch();
@@ -24,6 +26,14 @@ const PendingReadRequestsTable = () => {
   const [selected, setSelected] = useState([]);
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(5);
+  const {
+    isError: accessControlError,
+    errorMessage: accessControlErrorMessage,
+  } = store.getState().accessControl;
+
+  if (accessControlError) {
+    showSnackbar(`${accessControlErrorMessage}`, "error");
+  }
 
   const handleRequestSort = (event, property) => {
     const isAsc = orderBy === property && order === "asc";

@@ -28,7 +28,9 @@ export const listClaimedResources = createAsyncThunk(
 
       return { claimedResources: mappedResources };
     } catch (e) {
-      return thunkAPI.rejectWithValue("Unable to retrieve resource list.");
+      return thunkAPI.rejectWithValue({
+        message: "Unable to retrieve resource list.",
+      });
     }
   }
 );
@@ -57,7 +59,9 @@ export const listUnclaimedResources = createAsyncThunk(
 
       return { unclaimedResources: mappedResources };
     } catch (e) {
-      return thunkAPI.rejectWithValue("Unable to retrieve resource list.");
+      return thunkAPI.rejectWithValue({
+        message: "Unable to retrieve resource list.",
+      });
     }
   }
 );
@@ -87,7 +91,7 @@ export const getClaimedResource = createAsyncThunk(
 
       return { id: args.id, body: JSON.parse(decryptedResource.data) };
     } catch (e) {
-      return thunkAPI.rejectWithValue("Unable to get resource");
+      return thunkAPI.rejectWithValue({ message: "Unable to get resource" });
     }
   }
 );
@@ -140,7 +144,7 @@ export const claimResource = createAsyncThunk(
       await thunkAPI.dispatch(listUnclaimedResources());
       await thunkAPI.dispatch(listClaimedResources());
     } catch (e) {
-      return thunkAPI.rejectWithValue("Unable to claim resource");
+      return thunkAPI.rejectWithValue({ message: "Unable to claim resource" });
     }
   }
 );

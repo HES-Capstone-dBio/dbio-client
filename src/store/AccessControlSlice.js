@@ -16,6 +16,7 @@ const initialState = {
   isError: false,
   isFetching: false,
   isSuccess: false,
+  errorMessage: "",
 };
 
 const accessControlSlice = createSlice({
@@ -48,6 +49,7 @@ const accessControlSlice = createSlice({
       state.isError = false;
       state.isSuccess = true;
       state.grantedWriteRequests = payload.grantedWriteRequests;
+      state.errorMessage = "";
     },
     [listGrantedWriteRequests.pending]: (state, { payload }) => {
       state.isFetching = true;
@@ -55,12 +57,14 @@ const accessControlSlice = createSlice({
     [listGrantedWriteRequests.rejected]: (state, { payload }) => {
       state.isFetching = false;
       state.isError = true;
+      state.errorMessage = payload.message;
     },
     [listPendingWriteRequests.fulfilled]: (state, { payload }) => {
       state.isFetching = false;
       state.isError = false;
       state.isSuccess = true;
       state.pendingWriteRequests = payload.pendingWriteRequests;
+      state.errorMessage = "";
     },
     [listPendingWriteRequests.pending]: (state, { payload }) => {
       state.isFetching = true;
@@ -68,25 +72,29 @@ const accessControlSlice = createSlice({
     [listPendingWriteRequests.rejected]: (state, { payload }) => {
       state.isFetching = false;
       state.isError = true;
+      state.errorMessage = payload.message;
     },
     [listGrantedReadRequests.fulfilled]: (state, { payload }) => {
       state.isFetching = false;
       state.isError = false;
       state.isSuccess = true;
       state.grantedReadRequests = payload.grantedReadRequests;
+      state.errorMessage = "";
     },
     [listGrantedReadRequests.pending]: (state, { payload }) => {
       state.isFetching = true;
     },
-    [listGrantedReadRequests]: (state, { payload }) => {
+    [listGrantedReadRequests.rejected]: (state, { payload }) => {
       state.isFetching = false;
       state.isError = true;
+      state.errorMessage = payload.message;
     },
     [listPendingReadRequests.fulfilled]: (state, { payload }) => {
       state.isFetching = false;
       state.isError = false;
       state.isSuccess = true;
       state.pendingReadRequests = payload.pendingReadRequests;
+      state.errorMessage = "";
     },
     [listPendingReadRequests.pending]: (state, { payload }) => {
       state.isFetching = true;
@@ -94,6 +102,7 @@ const accessControlSlice = createSlice({
     [listPendingReadRequests.rejected]: (state, { payload }) => {
       state.isFetching = false;
       state.isError = true;
+      state.errorMessage = payload.message;
     },
   },
 });

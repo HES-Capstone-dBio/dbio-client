@@ -14,8 +14,9 @@ export const initializeIroncoreSDK = createAsyncThunk(
         await initializeSDK({ getIdToken, privateKey });
         return { ironcoreInitialized: true };
       } catch (e) {
-        console.log(e.message);
-        return thunkAPI.rejectWithValue("Unable to initialize IronCore SDK");
+        return thunkAPI.rejectWithValue({
+          message: "Unable to initialize IronCore SDK",
+        });
       }
     }
   }
@@ -31,10 +32,9 @@ export const deauthIroncoreSDK = createAsyncThunk(
       try {
         await deauthSDK();
       } catch (e) {
-        console.log(e.message);
-        return thunkAPI.rejectWithValue(
-          "Unable to deauthorize device from IronCore SDK."
-        );
+        return thunkAPI.rejectWithValue({
+          message: "Unable to deauthorize device from IronCore SDK.",
+        });
       }
     }
     return { ironcoreInitialied: false };

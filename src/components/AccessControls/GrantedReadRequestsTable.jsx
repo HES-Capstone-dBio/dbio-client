@@ -14,6 +14,8 @@ import { updateReadRequest } from "../../actions/AccessControlActions";
 import { getComparator, stableSort } from "../../Utils/TableUtils";
 import GrantedTableToolbar from "./GrantedTableToolbar";
 import GrantedTableHead from "./GrantedTableHead";
+import store from "../../store";
+import showSnackbar from "../UI/Snackbar/Snackbar";
 
 const GrantedReadRequestsTable = () => {
   const dispatch = useDispatch();
@@ -24,6 +26,14 @@ const GrantedReadRequestsTable = () => {
   const [selected, setSelected] = useState([]);
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(5);
+  const {
+    isError: accessControlError,
+    errorMessage: accessControlErrorMessage,
+  } = store.getState().accessControl;
+
+  if (accessControlError) {
+    showSnackbar(`${accessControlErrorMessage}`, "error");
+  }
 
   const handleRequestSort = (event, property) => {
     const isAsc = orderBy === property && order === "asc";
