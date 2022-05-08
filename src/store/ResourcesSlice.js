@@ -35,6 +35,10 @@ const resourcesSlice = createSlice({
     clearCurrentResourceBody(state) {
       state.currentResourceBody = "";
     },
+    clearCurrentErrorState(state) {
+      state.isError = false;
+      state.errorMessage = "";
+    },
   },
   extraReducers: {
     [listClaimedResources.fulfilled]: (state, { payload }) => {

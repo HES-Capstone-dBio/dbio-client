@@ -16,6 +16,10 @@ const uiSlice = createSlice({
         ...initialState,
       };
     },
+    clearCurrentErrorState(state) {
+      state.isError = false;
+      state.errorMessage = "";
+    },
   },
   extraReducers: {
     [initializeIroncoreSDK.fulfilled]: (state, { payload }) => {

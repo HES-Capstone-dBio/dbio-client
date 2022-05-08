@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import PropTypes from "prop-types";
 import { alpha } from "@mui/material/styles";
 import Box from "@mui/material/Box";
@@ -21,7 +21,7 @@ import { resourcesSelector } from "../../store/ResourcesSlice";
 import CheckCircle from "@mui/icons-material/CheckCircle";
 import { claimResource } from "../../actions/ResourceActions";
 import showSnackbar from "../UI/Snackbar/Snackbar";
-import store from "../../store";
+import { resourcesActions } from "../../store/ResourcesSlice";
 
 const headCells = [
   {
@@ -98,19 +98,24 @@ EnhancedTableToolbar.propTypes = {
 
 const ResourcesTable = (props) => {
   const dispatch = useDispatch();
-  const { unclaimedResources } = useSelector(resourcesSelector);
-
+  const {
+    unclaimedResources,
+    isError: resourceError,
+    errorMessage: resourceErrorMessage,
+  } = useSelector(resourcesSelector);
   const [order, setOrder] = useState("asc");
   const [orderBy, setOrderBy] = useState("createdTime");
   const [selected, setSelected] = useState([]);
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(5);
-  const { isError: resourceError, errorMessage: resourceErrorMessage } =
-    store.getState().resources;
 
-  if (resourceError) {
-    showSnackbar(`${resourceErrorMessage}`, "error");
-  }
+  useEffect(() => {
+    if (resourceError) {
+      showSnackbar(`${resourceErrorMessage}`, "error");
+      // Clear error state
+      dispatch(resourcesActions.clearCurrentErrorState());
+    }
+  }, [resourceError, resourceErrorMessage, dispatch]);
 
   const handleRequestSort = (event, property) => {
     const isAsc = orderBy === property && order === "asc";
