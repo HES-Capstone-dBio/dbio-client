@@ -39,7 +39,12 @@ const ResourcesTableHead = (props) => {
           </TableCell>
         )}
         {props.headCells
-          .filter((headCell) => (headCell.id !== "viewButton" && headCell.id !== "ipfs" && headCell.id !== "mintNft")) 
+          .filter(
+            (headCell) =>
+              headCell.id !== "viewButton" &&
+              headCell.id !== "ipfs" &&
+              headCell.id !== "mintNft"
+          )
           .map((headCell) => (
             <TableCell
               key={headCell.id}
@@ -65,7 +70,6 @@ const ResourcesTableHead = (props) => {
         {props.tableType === "claimed" && <TableCell>IPFS Link</TableCell>}
         {props.tableType === "claimed" && <TableCell>Mint NFT</TableCell>}
         {props.tableType === "claimed" && <TableCell>View Record</TableCell>}
-
       </TableRow>
     </TableHead>
   );

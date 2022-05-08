@@ -43,7 +43,7 @@ const headCells = [
   {
     id: "mintNft",
     numeric: false,
-    label: "Mint NFT"
+    label: "Mint NFT",
   },
   {
     id: "viewButton",
@@ -104,7 +104,7 @@ const ResourcesTable = (props) => {
 
   const mintNftClickHandler = () => {
     dispatch(mintNFT());
-  }
+  };
 
   // Avoid a layout jump when reaching the last page with empty rows.
   const emptyRows =
