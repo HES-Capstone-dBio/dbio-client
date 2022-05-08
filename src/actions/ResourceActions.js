@@ -177,26 +177,17 @@ export const mintNFT = createAsyncThunk(
 
       //Initiate the contract using the Contract address, ABI, and the wallet of the user
       const contract = new ethers.Contract(
-        "0xEdd57d64f68D11cEF21bAacBfbcDE308DC1bF828",
+        process.env.SMART_CONTRACT_ADDRES,
         dBioContract1155,
         wallet
       );
 
-      console.log("HERE 4");
-
-      //Overrides for estimating the gas cost and nonce; need to be programmatic
-      const overrides = {
-        nonce: 12,
-        gasLimit: "29999972",
-        gasPrice: "2999997200",
-      };
       //Initiate the transaction on the network
       const receipt = await contract.functions.redeem(
         address,
-        voucher,
-        overrides
+        voucher
       );
-      console.log(receipt);
+      console.log(receipt); //we can probably return the hash to the enduser
 
       // Async code to attempt to mint a single NFT here
     } catch (e) {
