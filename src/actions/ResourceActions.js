@@ -2,6 +2,9 @@ import { createAsyncThunk } from "@reduxjs/toolkit";
 import * as resourceAPI from "../api/ResourceAPI";
 import * as ironcoreAPI from "../api/IroncoreAPI";
 import store from "../store";
+import { JsonRpcProvider } from "@ethersproject/providers";
+import { ethers } from "ethers";
+import dBioContract1155 from "../abi/DBioContract1155.abi.json";
 
 /**
  * Async thunk action creator to get all resources available to user.
@@ -146,7 +149,6 @@ export const claimResource = createAsyncThunk(
     }
   }
 );
-
 /**
  * Async thunk action creator to mint a single NFT associated with a resource.
  */
@@ -154,9 +156,47 @@ export const mintNFT = createAsyncThunk(
   "resources/mintNft",
   async (args, thunkAPI) => {
     try {
+      console.log(args);
+      const voucher = args.voucher;
+      const privKey = store.getState().user.privateKey;
+
+      //Create a provider to connect to a testnet (Rinkeby) through Infura endpoint
+      const rinkeby = new JsonRpcProvider(
+        process.env.REACT_APP_INFURA_ENDPOINT, 
+        "rinkeby"
+      );
+
+      // Initiate the user's wallet
+      let wallet = new ethers.Wallet(privKey);
+      wallet = wallet.connect(rinkeby); //connect the wallet to the network
+      const address = await wallet.getAddress();
+   
+      //Initiate the contract using the Contract address, ABI, and the wallet of the user
+      const contract = new ethers.Contract(
+        "0xEdd57d64f68D11cEF21bAacBfbcDE308DC1bF828",
+        dBioContract1155,
+        wallet
+      );
+
+      console.log("HERE 4");
+
+      //Overrides for estimating the gas cost and nonce; need to be programmatic
+      const overrides = {
+        nonce: 12,
+        gasLimit: "29999972",
+        gasPrice: "2999997200",
+      };
+      //Initiate the transaction on the network
+      const receipt = await contract.functions.redeem(
+        address,
+        voucher,
+        overrides
+      );
+      console.log(receipt);
+
       // Async code to attempt to mint a single NFT here
     } catch (e) {
-      return thunkAPI.rejectWithValue({ message: "Unable to mind NFT" });
+      return thunkAPI.rejectWithValue({ message: "Unable to mint NFT" });
     }
   }
 );
