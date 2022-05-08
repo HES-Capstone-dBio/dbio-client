@@ -33,7 +33,9 @@ export const listClaimedResources = createAsyncThunk(
 
       return { claimedResources: mappedResources };
     } catch (e) {
-      return thunkAPI.rejectWithValue("Unable to retrieve resource list.");
+      return thunkAPI.rejectWithValue({
+        message: "Unable to retrieve claimed resources list.",
+      });
     }
   }
 );
@@ -62,7 +64,9 @@ export const listUnclaimedResources = createAsyncThunk(
 
       return { unclaimedResources: mappedResources };
     } catch (e) {
-      return thunkAPI.rejectWithValue("Unable to retrieve resource list.");
+      return thunkAPI.rejectWithValue({
+        message: "Unable to retrieve unclaimed resources list.",
+      });
     }
   }
 );
@@ -92,7 +96,7 @@ export const getClaimedResource = createAsyncThunk(
 
       return { id: args.id, body: JSON.parse(decryptedResource.data) };
     } catch (e) {
-      return thunkAPI.rejectWithValue("Unable to get resource");
+      return thunkAPI.rejectWithValue({ message: "Unable to get resource" });
     }
   }
 );
@@ -145,7 +149,7 @@ export const claimResource = createAsyncThunk(
       await thunkAPI.dispatch(listUnclaimedResources());
       await thunkAPI.dispatch(listClaimedResources());
     } catch (e) {
-      return thunkAPI.rejectWithValue("Unable to claim resource");
+      return thunkAPI.rejectWithValue({ message: "Unable to claim resource" });
     }
   }
 );
@@ -162,7 +166,7 @@ export const mintNFT = createAsyncThunk(
 
       //Create a provider to connect to a testnet (Rinkeby) through Infura endpoint
       const rinkeby = new JsonRpcProvider(
-        process.env.REACT_APP_INFURA_ENDPOINT, 
+        process.env.REACT_APP_INFURA_ENDPOINT,
         "rinkeby"
       );
 
@@ -170,7 +174,7 @@ export const mintNFT = createAsyncThunk(
       let wallet = new ethers.Wallet(privKey);
       wallet = wallet.connect(rinkeby); //connect the wallet to the network
       const address = await wallet.getAddress();
-   
+
       //Initiate the contract using the Contract address, ABI, and the wallet of the user
       const contract = new ethers.Contract(
         "0xEdd57d64f68D11cEF21bAacBfbcDE308DC1bF828",
