@@ -3,8 +3,14 @@
 
 The dBio Client is the user facing interface of the dBio system. All users (both patients and third party providers) must initially sign up for dBio through the client.
 
-## Third Party SDKs
-dBio uses the following third party SDKs
+## Tools and Third Party SDKs
+
+At the time of this writing Node.js version 16.14.0 was used for development. However, this should be backwards compatible with node versions 14 and 12.
+
+The dBio Client utilizes the following tools:
+- **[Trunk](https://trunk.io/)** - Used for linting. See the _trunk.yaml_ file that handles versioning of linters.
+
+The dBio uses the following third party SDKs:
 - **[Torus CustomAuth SDK](https://docs.tor.us/customauth/get-started)** - used to create an ethereum address and generate a private/public key pair for the user.
 - **[Auth0 React SDK](https://auth0.com/docs/libraries/auth0-react)** - used for authentication. Generates a JWT that is used to retrieve a user's Torus key and to initialize the IronCore SDK.
 - **[IronWeb Data Control Platform SDK](https://ironcorelabs.com/docs/data-control-platform/javascript/react/)** - [IronCore's](https://ironcorelabs.com/) SDK that is implemented for proxy re-encryption.
