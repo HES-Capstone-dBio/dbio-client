@@ -15,7 +15,12 @@ The dBio uses the following third party SDKs:
 - **[Auth0 React SDK](https://auth0.com/docs/libraries/auth0-react)** - used for authentication. Generates a JWT that is used to retrieve a user's Torus key and to initialize the IronCore SDK.
 - **[IronWeb Data Control Platform SDK](https://ironcorelabs.com/docs/data-control-platform/javascript/react/)** - [IronCore's](https://ironcorelabs.com/) SDK that is implemented for proxy re-encryption.
 
-## Configuration and Future Development
+## Future Development and Configuration
+
+#### **A Note to Developers**
+The React state management architecture on this application is primarily handled with [Redux Toolkit](https://redux-toolkit.js.org/). For components styling [MUI](https://mui.com/) with [Emotion](https://emotion.sh/docs/introduction) as a styling engine.
+
+#### **Configuration**
 
 Configuration constants can be found in the **_constants.js_** file.
 
