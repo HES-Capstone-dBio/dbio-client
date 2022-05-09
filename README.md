@@ -1,6 +1,27 @@
 ![dbio-logo](./readme-assets/logo.png)
 # dBio Client
 
+The dBio Client is the user facing interface of the dBio system. All users (both patients and third party providers) must initially sign up for dBio through the client.
+
+## Third Party SDKs
+dBio uses the following third party SDKs
+- **[Torus CustomAuth SDK](https://docs.tor.us/customauth/get-started)** - used to create an ethereum address and generate a private/public key pair for the user.
+- **[Auth0 React SDK](https://auth0.com/docs/libraries/auth0-react)** - used for authentication. Generates a JWT that is used to retrieve a user's Torus key and to initialize the IronCore SDK.
+- **[IronWeb Data Control Platform SDK](https://ironcorelabs.com/docs/data-control-platform/javascript/react/)** - [IronCore's](https://ironcorelabs.com/) SDK that is implemented for proxy re-encryption.
+
+## Configuration and Future Development
+
+Configuration constants can be found in the **_constants.js_** file.
+
+For future developers, if you wish to build on this client or run it you will need to do a few things.
+
+1. Create your own [Auth0](https://auth0.com/) application. Once this Auth0 application is created you will need you plug in your own Auth0 application domain and client id into the *AUTH0_DOMAIN* and *AUTH0_CLIENT_ID* variables in constants.js.
+2. Note that in *constants.js* the verifier is configured for google. You need to make sure you verifier on your Auth0 application is configured as google as well.
+3. The *BACKEND_ENDPOINT* constant is the URL address for the dBio protocol server.
+4. You will need to setup a [Torus](tor.us) verifier. Register with Torus and under their "Custom Auth" tab in the dashboard you can create your own verifier. In the below image you can see I created a verifier that uses a JWT login, has a verifier-id (This is used in constants.js), my Auth0 client ID and finally the Auth0 domain.
+
+![torus-example](./readme-assets/torus.png)
+
 ## Running Locally
 
 In the project directory, you can run:
