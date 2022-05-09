@@ -109,7 +109,7 @@ const ResourcesTable = (props) => {
   };
 
   const mintNftClickHandler = (id, voucher) => {
-    dispatch(mintNFT({id, voucher: JSON.parse(voucher)}));
+    dispatch(mintNFT({ id, voucher: JSON.parse(voucher) }));
   };
 
   // Avoid a layout jump when reaching the last page with empty rows.

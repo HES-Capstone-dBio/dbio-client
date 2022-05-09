@@ -164,7 +164,6 @@ export const mintNFT = createAsyncThunk(
       const privKey = store.getState().user.privateKey;
 
       // Async code to attempt to mint a single NFT here
-      
     } catch (e) {
       return thunkAPI.rejectWithValue({ message: "Unable to mint NFT" });
     }
