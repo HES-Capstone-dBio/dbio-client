@@ -2,6 +2,9 @@ import { createAsyncThunk } from "@reduxjs/toolkit";
 import * as resourceAPI from "../api/ResourceAPI";
 import * as ironcoreAPI from "../api/IroncoreAPI";
 import store from "../store";
+import { JsonRpcProvider } from "@ethersproject/providers";
+import { ethers } from "ethers";
+import dBioContract1155 from "../abi/DBioContract1155.abi.json";
 
 /**
  * Async thunk action creator to get all resources available to user.
