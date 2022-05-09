@@ -1,4 +1,37 @@
+![dbio-logo](./readme-assets/logo.png)
 # dBio Client
+
+The dBio Client is the user facing interface of the dBio system. All users (both patients and third party providers) must initially sign up for dBio through the client.
+
+## Tools and Third Party SDKs
+
+At the time of this writing Node.js version 16.14.0 was used for development. However, this should be backwards compatible with node versions 14 and 12.
+
+The dBio Client utilizes the following tools:
+- **[Trunk](https://trunk.io/)** - Used for linting. See the _trunk.yaml_ file that handles versioning of linters.
+
+The dBio uses the following third party SDKs:
+- **[Torus CustomAuth SDK](https://docs.tor.us/customauth/get-started)** - used to create an ethereum address and generate a private/public key pair for the user.
+- **[Auth0 React SDK](https://auth0.com/docs/libraries/auth0-react)** - used for authentication. Generates a JWT that is used to retrieve a user's Torus key and to initialize the IronCore SDK.
+- **[IronWeb Data Control Platform SDK](https://ironcorelabs.com/docs/data-control-platform/javascript/react/)** - [IronCore's](https://ironcorelabs.com/) SDK that is implemented for proxy re-encryption.
+
+## Future Development and Configuration
+
+#### **A Note to Developers**
+The React state management architecture on this application is primarily handled with [Redux Toolkit](https://redux-toolkit.js.org/). For components styling [MUI](https://mui.com/) with [Emotion](https://emotion.sh/docs/introduction) as a styling engine.
+
+#### **Configuration**
+
+Configuration constants can be found in the **_constants.js_** file.
+
+For future developers, if you wish to build on this client or run it you will need to do a few things.
+
+1. Create your own [Auth0](https://auth0.com/) application. Once this Auth0 application is created you will need you plug in your own Auth0 application domain and client id into the *AUTH0_DOMAIN* and *AUTH0_CLIENT_ID* variables in constants.js.
+2. Note that in *constants.js* the verifier is configured for google. You need to make sure you verifier on your Auth0 application is configured as google as well.
+3. The *BACKEND_ENDPOINT* constant is the URL address for the dBio protocol server.
+4. You will need to setup a [Torus](tor.us) verifier. Register with Torus and under their "Custom Auth" tab in the dashboard you can create your own verifier. In the below image you can see a verifier was created that uses a JWT login, has a verifier-id (This is used in constants.js), my Auth0 client ID and finally the Auth0 domain.
+
+![torus-example](./readme-assets/torus.png)
 
 ## Running Locally
 
@@ -36,4 +69,3 @@ If you aren't satisfied with the build tool and configuration choices, you can `
 Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
 
 You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
-
