@@ -160,7 +160,7 @@ export const mintNFT = createAsyncThunk(
   "resources/mintNft",
   async (args, thunkAPI) => {
     try {
-      const voucher = args.voucher;
+      const { voucher, fhirResourceId, creatorEthAddress: ethAddress } = args;
       const privKey = store.getState().user.privateKey;
 
       //Create a provider to connect to a testnet (Rinkeby) through Infura endpoint
@@ -180,10 +180,16 @@ export const mintNFT = createAsyncThunk(
         wallet
       );
 
-      //Initiate the transaction on the network
+      //Initiate the transaction on the network and wait for it to finish
       await (await contract.functions.redeem(address, voucher)).wait();
 
-      // Async code to attempt to mint a single NFT here
+      // Update the minted status of this claimed resource to be true
+      await resourceAPI.updateClaimedResourceMintStateTrue({
+        ethAddress,
+        fhirResourceId,
+      });
+      // Relist the claimed table
+      await thunkAPI.dispatch(listClaimedResources());
     } catch (e) {
       return thunkAPI.rejectWithValue({ message: "Unable to mint NFT" });
     }
