@@ -160,7 +160,6 @@ export const mintNFT = createAsyncThunk(
   "resources/mintNft",
   async (args, thunkAPI) => {
     try {
-      console.log(args);
       const voucher = args.voucher;
       const privKey = store.getState().user.privateKey;
 
@@ -169,7 +168,6 @@ export const mintNFT = createAsyncThunk(
         process.env.REACT_APP_INFURA_ENDPOINT,
         "rinkeby"
       );
-
       // Initiate the user's wallet
       let wallet = new ethers.Wallet(privKey);
       wallet = wallet.connect(rinkeby); //connect the wallet to the network
@@ -177,17 +175,15 @@ export const mintNFT = createAsyncThunk(
 
       //Initiate the contract using the Contract address, ABI, and the wallet of the user
       const contract = new ethers.Contract(
-        process.env.SMART_CONTRACT_ADDRES,
+        process.env.REACT_APP_SMART_CONTRACT_ADDRESS,
         dBioContract1155,
         wallet
       );
 
       //Initiate the transaction on the network
-      const receipt = await contract.functions.redeem(
-        address,
-        voucher
-      );
-      console.log(receipt); //we can probably return the hash to the enduser
+      const receipt = await (
+        await contract.functions.redeem(address, voucher)
+      ).wait();
 
       // Async code to attempt to mint a single NFT here
     } catch (e) {
