@@ -2,6 +2,9 @@ import { createAsyncThunk } from "@reduxjs/toolkit";
 import * as resourceAPI from "../api/ResourceAPI";
 import * as ironcoreAPI from "../api/IroncoreAPI";
 import store from "../store";
+import { JsonRpcProvider } from "@ethersproject/providers";
+import { ethers } from "ethers";
+import dBioContract1155 from "../abi/DBioContract1155.abi.json";
 
 /**
  * Async thunk action creator to get all resources available to user.
@@ -22,6 +25,8 @@ export const listClaimedResources = createAsyncThunk(
           creatorEthAddress: resource.creator_eth_address,
           resourceType: resource.fhir_resource_type,
           ipfsCid: resource.ipfs_cid,
+          ethNftVoucher: resource.eth_nft_voucher,
+          nftMinted: resource.nft_minted,
           createdTime: new Date(resource.timestamp).toLocaleDateString(),
         };
       });
@@ -29,7 +34,7 @@ export const listClaimedResources = createAsyncThunk(
       return { claimedResources: mappedResources };
     } catch (e) {
       return thunkAPI.rejectWithValue({
-        message: "Unable to retrieve resource list.",
+        message: "Unable to retrieve claimed resources list.",
       });
     }
   }
@@ -60,7 +65,7 @@ export const listUnclaimedResources = createAsyncThunk(
       return { unclaimedResources: mappedResources };
     } catch (e) {
       return thunkAPI.rejectWithValue({
-        message: "Unable to retrieve resource list.",
+        message: "Unable to retrieve unclaimed resources list.",
       });
     }
   }
@@ -145,6 +150,48 @@ export const claimResource = createAsyncThunk(
       await thunkAPI.dispatch(listClaimedResources());
     } catch (e) {
       return thunkAPI.rejectWithValue({ message: "Unable to claim resource" });
+    }
+  }
+);
+/**
+ * Async thunk action creator to mint a single NFT associated with a resource.
+ */
+export const mintNFT = createAsyncThunk(
+  "resources/mintNft",
+  async (args, thunkAPI) => {
+    try {
+      const { voucher, fhirResourceId, creatorEthAddress: ethAddress } = args;
+      const privKey = store.getState().user.privateKey;
+
+      //Create a provider to connect to a testnet (Rinkeby) through Infura endpoint
+      const rinkeby = new JsonRpcProvider(
+        process.env.REACT_APP_INFURA_ENDPOINT,
+        "rinkeby"
+      );
+      // Initiate the user's wallet
+      let wallet = new ethers.Wallet(privKey);
+      wallet = wallet.connect(rinkeby); //connect the wallet to the network
+      const address = await wallet.getAddress();
+
+      //Initiate the contract using the Contract address, ABI, and the wallet of the user
+      const contract = new ethers.Contract(
+        process.env.REACT_APP_SMART_CONTRACT_ADDRESS,
+        dBioContract1155,
+        wallet
+      );
+
+      //Initiate the transaction on the network and wait for it to finish
+      await (await contract.functions.redeem(address, voucher)).wait();
+
+      // Update the minted status of this claimed resource to be true
+      await resourceAPI.updateClaimedResourceMintStateTrue({
+        ethAddress,
+        fhirResourceId,
+      });
+      // Relist the claimed table
+      await thunkAPI.dispatch(listClaimedResources());
+    } catch (e) {
+      return thunkAPI.rejectWithValue({ message: "Unable to mint NFT" });
     }
   }
 );

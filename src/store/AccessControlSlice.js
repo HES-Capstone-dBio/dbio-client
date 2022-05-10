@@ -36,6 +36,10 @@ const accessControlSlice = createSlice({
       // Filter out user from list of users in group
       state.members.filter((user) => user !== action.payload);
     },
+    clearCurrentErrorState(state) {
+      state.isError = false;
+      state.errorMessage = "";
+    },
   },
   extraReducers: {
     [setGroup.fulfilled]: (state, { payload }) => {
@@ -107,5 +111,6 @@ const accessControlSlice = createSlice({
   },
 });
 
+export const accessControlActions = accessControlSlice.actions;
 export const accessControlSelector = (state) => state.accessControl;
 export default accessControlSlice.reducer;

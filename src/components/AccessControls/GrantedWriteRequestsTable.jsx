@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Box from "@mui/material/Box";
 import Table from "@mui/material/Table";
 import TableBody from "@mui/material/TableBody";
@@ -14,26 +14,29 @@ import { updateWriteRequest } from "../../actions/AccessControlActions";
 import { getComparator, stableSort } from "../../Utils/TableUtils";
 import GrantedTableHead from "./GrantedTableHead";
 import GrantedTableToolbar from "./GrantedTableToolbar";
-import store from "../../store";
+import { accessControlActions } from "../../store/AccessControlSlice";
 import showSnackbar from "../UI/Snackbar/Snackbar";
 
 const GrantedWriteRequestsTable = () => {
   const dispatch = useDispatch();
-
-  const { grantedWriteRequests } = useSelector(accessControlSelector);
+  const {
+    grantedWriteRequests,
+    isError: accessControlError,
+    errorMessage: accessControlErrorMessage,
+  } = useSelector(accessControlSelector);
   const [order, setOrder] = useState("asc");
   const [orderBy, setOrderBy] = useState("createdTime");
   const [selected, setSelected] = useState([]);
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(5);
-  const {
-    isError: accessControlError,
-    errorMessage: accessControlErrorMessage,
-  } = store.getState().accessControl;
 
-  if (accessControlError) {
-    showSnackbar(`${accessControlErrorMessage}`, "error");
-  }
+  useEffect(() => {
+    if (accessControlError) {
+      showSnackbar(`${accessControlErrorMessage}`, "error");
+      // Clear error state
+      dispatch(accessControlActions.clearCurrentErrorState());
+    }
+  }, [accessControlError, accessControlErrorMessage, dispatch]);
 
   const handleRequestSort = (event, property) => {
     const isAsc = orderBy === property && order === "asc";

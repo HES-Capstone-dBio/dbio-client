@@ -23,6 +23,10 @@ const userSlice = createSlice({
         ...initialState,
       };
     },
+    clearCurrentErrorState(state) {
+      state.isError = false;
+      state.errorMessage = "";
+    },
   },
   extraReducers: {
     [loginUser.fulfilled]: (state, { payload }) => {

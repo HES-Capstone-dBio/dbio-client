@@ -4,6 +4,7 @@ import {
   listUnclaimedResources,
   getClaimedResource,
   claimResource,
+  mintNFT,
 } from "../actions/ResourceActions";
 
 const initialState = {
@@ -12,9 +13,11 @@ const initialState = {
   isFetchingList: false,
   isFetchingResource: false,
   isClaimingResource: false,
+  isMintingNft: false,
   successClaimingResource: false,
   successFetchingList: false,
   successFetchingResource: false,
+  successMintingNft: false,
   currentResourceBody: "",
   isError: false,
   errorMessage: "",
@@ -31,6 +34,10 @@ const resourcesSlice = createSlice({
     },
     clearCurrentResourceBody(state) {
       state.currentResourceBody = "";
+    },
+    clearCurrentErrorState(state) {
+      state.isError = false;
+      state.errorMessage = "";
     },
   },
   extraReducers: {
@@ -90,6 +97,20 @@ const resourcesSlice = createSlice({
     },
     [claimResource.rejected]: (state, { payload }) => {
       state.isClaimingResource = false;
+      state.isError = true;
+      state.errorMessage = payload.message;
+    },
+    [mintNFT.fulfilled]: (state, { payload }) => {
+      state.isMintingNft = false;
+      state.isError = false;
+      state.successMintingNft = true;
+      state.errorMessage = "";
+    },
+    [mintNFT.pending]: (state, { payload }) => {
+      state.isMintingNft = true;
+    },
+    [mintNFT.rejected]: (state, { payload }) => {
+      state.isMintingNft = false;
       state.isError = true;
       state.errorMessage = payload.message;
     },

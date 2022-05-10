@@ -51,7 +51,7 @@ const Home = () => {
         <Grid item xs={12} md={12}>
           <Typography
             color={"primary"}
-            style={{ display: "inline-block"}}
+            style={{ display: "inline-block" }}
             sx={{
               fontFamily: "Roboto, Helvetica, Arial",
               fontWeight: 400,
@@ -59,12 +59,11 @@ const Home = () => {
               letterSpacing: "0.00938em",
             }}
           >
-            Welcome to dBio, 
-          </Typography>
-          {" "}
+            Welcome to dBio,
+          </Typography>{" "}
           <Typography
             color={"secondary"}
-            style={{ display: "inline-block"}}
+            style={{ display: "inline-block" }}
             sx={{
               fontFamily: "Roboto, Helvetica, Arial",
               fontWeight: 400,

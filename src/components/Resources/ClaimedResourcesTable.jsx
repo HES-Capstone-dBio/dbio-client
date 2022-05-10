@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import Box from "@mui/material/Box";
 import Table from "@mui/material/Table";
 import TableBody from "@mui/material/TableBody";
@@ -10,13 +10,14 @@ import Toolbar from "@mui/material/Toolbar";
 import Typography from "@mui/material/Typography";
 import Paper from "@mui/material/Paper";
 import Button from "@mui/material/Button";
-import { useSelector } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
 import { getComparator, stableSort } from "../../Utils/TableUtils";
 import ResourcesTableHead from "./ResourcesTableHead";
 import { Link as RouterLink } from "react-router-dom";
 import { resourcesSelector } from "../../store/ResourcesSlice";
 import showSnackbar from "../UI/Snackbar/Snackbar";
-import store from "../../store";
+import { mintNFT } from "../../actions/ResourceActions";
+import { resourcesActions } from "../../store/ResourcesSlice";
 
 const headCells = [
   {
@@ -42,7 +43,7 @@ const headCells = [
   {
     id: "mintNft",
     numeric: false,
-    label: "Mint NFT"
+    label: "Mint NFT",
   },
   {
     id: "viewButton",
@@ -73,17 +74,24 @@ const EnhancedTableToolbar = (props) => {
 };
 
 const ResourcesTable = (props) => {
-  const { claimedResources } = useSelector(resourcesSelector);
+  const {
+    claimedResources,
+    isError: resourceError,
+    errorMessage: resourceErrorMessage,
+  } = useSelector(resourcesSelector);
   const [order, setOrder] = useState("asc");
   const [orderBy, setOrderBy] = useState("createdTime");
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(5);
-  const { isError: resourceError, errorMessage: resourceErrorMessage } =
-    store.getState().resources;
+  const dispatch = useDispatch();
 
-  if (resourceError) {
-    showSnackbar(`${resourceErrorMessage}`, "error");
-  }
+  useEffect(() => {
+    if (resourceError) {
+      showSnackbar(`${resourceErrorMessage}`, "error");
+      // Clear error state
+      dispatch(resourcesActions.clearCurrentErrorState());
+    }
+  }, [resourceError, resourceErrorMessage, dispatch]);
 
   const handleRequestSort = (event, property) => {
     const isAsc = orderBy === property && order === "asc";
@@ -100,9 +108,9 @@ const ResourcesTable = (props) => {
     setPage(0);
   };
 
-  const mintNftClickHandler = () => {
-    console.log("Minting NFT");
-  }
+  const mintNftClickHandler = (id, voucher) => {
+    dispatch(mintNFT({ id, voucher: JSON.parse(voucher) }));
+  };
 
   // Avoid a layout jump when reaching the last page with empty rows.
   const emptyRows =
@@ -158,7 +166,9 @@ const ResourcesTable = (props) => {
                         <Button
                           variant="contained"
                           size="small"
-                          onClick={mintNftClickHandler}
+                          onClick={() =>
+                            mintNftClickHandler(row.id, row.ethNftVoucher)
+                          }
                         >
                           Mint NFT
                         </Button>

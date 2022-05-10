@@ -73,8 +73,8 @@ const Landing = () => {
             color={"primary"}
             sx={{
               pr: 4,
-              fontFamily: "Roboto",
-              fontWeight: 500,
+              fontFamily: "Barlow, Roboto",
+              fontWeight: 700,
               fontSize: {
                 lg: "1.65rem",
                 md: "1.35rem",
