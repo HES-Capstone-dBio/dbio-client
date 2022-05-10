@@ -181,9 +181,7 @@ export const mintNFT = createAsyncThunk(
       );
 
       //Initiate the transaction on the network
-      const receipt = await (
-        await contract.functions.redeem(address, voucher)
-      ).wait();
+      await (await contract.functions.redeem(address, voucher)).wait();
 
       // Async code to attempt to mint a single NFT here
     } catch (e) {
