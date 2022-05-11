@@ -27,6 +27,11 @@ const headCells = [
     label: "Record Type",
   },
   {
+    id: "creatorName",
+    numeric: false,
+    label: "Creator Name",
+  },
+  {
     id: "creatorEthAddress",
     numeric: false,
     label: "Creator Ethereum Address",
@@ -81,6 +86,7 @@ const ResourcesTable = (props) => {
     errorMessage: resourceErrorMessage,
     isMintingNft,
   } = useSelector(resourcesSelector);
+  const [clickedMintButton, setClickedMintButton] = useState(-1);
   const [order, setOrder] = useState("asc");
   const [orderBy, setOrderBy] = useState("createdTime");
   const [page, setPage] = useState(0);
@@ -111,6 +117,8 @@ const ResourcesTable = (props) => {
   };
 
   const mintNftClickHandler = (id, creatorEthAddress, voucher) => {
+    setClickedMintButton(id);
+
     dispatch(
       mintNFT({
         fhirResourceId: id,
@@ -157,10 +165,16 @@ const ResourcesTable = (props) => {
                       <TableCell component="th" id={labelId} scope="row">
                         {row.resourceType}
                       </TableCell>
+                      <TableCell align="left">{row.creatorName}</TableCell>
                       <TableCell align="left">
                         {row.creatorEthAddress}
                       </TableCell>
-                      <TableCell align="left">{row.createdTime}</TableCell>
+                      <TableCell align="left">
+                        {new Date(row.createdTime).toLocaleString(undefined, {
+                          timeStyle: "short",
+                          dateStyle: "short",
+                        })}
+                      </TableCell>
                       <TableCell>
                         <Button
                           href={`https://ipfs.io/ipfs/${row.ipfsCid}`}
@@ -171,21 +185,40 @@ const ResourcesTable = (props) => {
                         </Button>
                       </TableCell>
                       <TableCell>
-                        <LoadingButton
-                          variant="contained"
-                          size="small"
-                          loading={isMintingNft}
-                          disabled={row.nftMinted}
-                          onClick={() =>
-                            mintNftClickHandler(
-                              row.id,
-                              row.creatorEthAddress,
-                              row.ethNftVoucher
-                            )
-                          }
-                        >
-                          Mint NFT
-                        </LoadingButton>
+                        {!row.nftMinted && (
+                          <LoadingButton
+                            variant="contained"
+                            size="small"
+                            loading={
+                              clickedMintButton === row.id && isMintingNft
+                            }
+                            onClick={() =>
+                              mintNftClickHandler(
+                                row.id,
+                                row.creatorEthAddress,
+                                row.ethNftVoucher
+                              )
+                            }
+                          >
+                            Mint NFT
+                          </LoadingButton>
+                        )}
+                        {row.nftMinted && (
+                          <LoadingButton
+                            variant="contained"
+                            size="small"
+                            disabled={true}
+                            onClick={() =>
+                              mintNftClickHandler(
+                                row.id,
+                                row.creatorEthAddress,
+                                row.ethNftVoucher
+                              )
+                            }
+                          >
+                            Minted
+                          </LoadingButton>
+                        )}
                       </TableCell>
                       <TableCell>
                         <Button
