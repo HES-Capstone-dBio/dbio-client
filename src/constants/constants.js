@@ -1,5 +1,4 @@
-export const GOOGLE = "google";
-export const AUTH0_DOMAIN = "https://dbio.us.auth0.com";
-export const AUTH0_CLIENT_ID = "xIEcOQHJ1jJYClYvPS2EFAcinK0w7R2K";
-export const BACKEND_ENDPOINT = "http://localhost:8080";
-export const TORUS_VERIFIER = "dbio-auth0-testnet";
+export const AUTH0_DOMAIN = process.env.REACT_APP_AUTH0_DOMAIN;
+export const AUTH0_CLIENT_ID = process.env.REACT_APP_AUTH0_CLIENT_ID;
+export const BACKEND_ENDPOINT = process.env.REACT_APP_BACKEND_ENDPOINT;
+export const TORUS_VERIFIER = process.env.REACT_APP_TORUS_VERIFIER;
