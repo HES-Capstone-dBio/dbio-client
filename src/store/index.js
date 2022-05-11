@@ -49,7 +49,6 @@ const store = configureStore({
     ui: uiReducer,
   },
   devTools: process.env.NODE_ENV !== "production",
-  devTools: true,
   preloadedState: loadFromLocalStorage(),
   middleware: enhancers,
 });
