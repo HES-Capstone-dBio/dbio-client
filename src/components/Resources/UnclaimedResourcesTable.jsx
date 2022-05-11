@@ -30,6 +30,11 @@ const headCells = [
     label: "Record Type",
   },
   {
+    id: "creatorName",
+    numeric: false,
+    label: "Creator Name",
+  },
+  {
     id: "creatorEthAddress",
     numeric: false,
     label: "Creator Ethereum Address",
@@ -256,10 +261,16 @@ const ResourcesTable = (props) => {
                       <TableCell component="th" id={labelId} scope="row">
                         {row.resourceType}
                       </TableCell>
+                      <TableCell align="left">{row.creatorName}</TableCell>
                       <TableCell align="left">
                         {row.creatorEthAddress}
                       </TableCell>
-                      <TableCell align="left">{row.createdTime}</TableCell>
+                      <TableCell align="left">
+                        {new Date(row.createdTime).toLocaleString(undefined, {
+                          timeStyle: "short",
+                          dateStyle: "short",
+                        })}{" "}
+                      </TableCell>
                     </TableRow>
                   );
                 })}

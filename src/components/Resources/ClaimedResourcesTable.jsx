@@ -10,6 +10,7 @@ import Toolbar from "@mui/material/Toolbar";
 import Typography from "@mui/material/Typography";
 import Paper from "@mui/material/Paper";
 import Button from "@mui/material/Button";
+import LoadingButton from "@mui/lab/LoadingButton";
 import { useSelector, useDispatch } from "react-redux";
 import { getComparator, stableSort } from "../../Utils/TableUtils";
 import ResourcesTableHead from "./ResourcesTableHead";
@@ -24,6 +25,11 @@ const headCells = [
     id: "resourceType",
     numeric: false,
     label: "Record Type",
+  },
+  {
+    id: "creatorName",
+    numeric: false,
+    label: "Creator Name",
   },
   {
     id: "creatorEthAddress",
@@ -78,7 +84,9 @@ const ResourcesTable = (props) => {
     claimedResources,
     isError: resourceError,
     errorMessage: resourceErrorMessage,
+    isMintingNft,
   } = useSelector(resourcesSelector);
+  const [clickedMintButton, setClickedMintButton] = useState(-1);
   const [order, setOrder] = useState("asc");
   const [orderBy, setOrderBy] = useState("createdTime");
   const [page, setPage] = useState(0);
@@ -108,8 +116,16 @@ const ResourcesTable = (props) => {
     setPage(0);
   };
 
-  const mintNftClickHandler = (id, voucher) => {
-    dispatch(mintNFT({ id, voucher: JSON.parse(voucher) }));
+  const mintNftClickHandler = (id, creatorEthAddress, voucher) => {
+    setClickedMintButton(id);
+
+    dispatch(
+      mintNFT({
+        fhirResourceId: id,
+        creatorEthAddress,
+        voucher: JSON.parse(voucher),
+      })
+    );
   };
 
   // Avoid a layout jump when reaching the last page with empty rows.
@@ -149,10 +165,16 @@ const ResourcesTable = (props) => {
                       <TableCell component="th" id={labelId} scope="row">
                         {row.resourceType}
                       </TableCell>
+                      <TableCell align="left">{row.creatorName}</TableCell>
                       <TableCell align="left">
                         {row.creatorEthAddress}
                       </TableCell>
-                      <TableCell align="left">{row.createdTime}</TableCell>
+                      <TableCell align="left">
+                        {new Date(row.createdTime).toLocaleString(undefined, {
+                          timeStyle: "short",
+                          dateStyle: "short",
+                        })}
+                      </TableCell>
                       <TableCell>
                         <Button
                           href={`https://ipfs.io/ipfs/${row.ipfsCid}`}
@@ -163,15 +185,40 @@ const ResourcesTable = (props) => {
                         </Button>
                       </TableCell>
                       <TableCell>
-                        <Button
-                          variant="contained"
-                          size="small"
-                          onClick={() =>
-                            mintNftClickHandler(row.id, row.ethNftVoucher)
-                          }
-                        >
-                          Mint NFT
-                        </Button>
+                        {!row.nftMinted && (
+                          <LoadingButton
+                            variant="contained"
+                            size="small"
+                            loading={
+                              clickedMintButton === row.id && isMintingNft
+                            }
+                            onClick={() =>
+                              mintNftClickHandler(
+                                row.id,
+                                row.creatorEthAddress,
+                                row.ethNftVoucher
+                              )
+                            }
+                          >
+                            Mint NFT
+                          </LoadingButton>
+                        )}
+                        {row.nftMinted && (
+                          <LoadingButton
+                            variant="contained"
+                            size="small"
+                            disabled={true}
+                            onClick={() =>
+                              mintNftClickHandler(
+                                row.id,
+                                row.creatorEthAddress,
+                                row.ethNftVoucher
+                              )
+                            }
+                          >
+                            Minted
+                          </LoadingButton>
+                        )}
                       </TableCell>
                       <TableCell>
                         <Button

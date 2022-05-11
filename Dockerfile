@@ -1,6 +1,8 @@
 # Pull official base image
 FROM node:16.14-alpine
 
+RUN apk add g++ make py3-pip
+
 # Set working directory
 WORKDIR /app
 

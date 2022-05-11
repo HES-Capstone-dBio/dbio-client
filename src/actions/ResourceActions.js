@@ -21,13 +21,14 @@ export const listClaimedResources = createAsyncThunk(
       const mappedResources = resources.map((resource) => {
         return {
           id: resource.fhir_resource_id,
+          creatorName: resource.creator_details,
           ironcoreDocumentId: resource.ironcore_document_id,
           creatorEthAddress: resource.creator_eth_address,
           resourceType: resource.fhir_resource_type,
           ipfsCid: resource.ipfs_cid,
           ethNftVoucher: resource.eth_nft_voucher,
           nftMinted: resource.nft_minted,
-          createdTime: new Date(resource.timestamp).toLocaleDateString(),
+          createdTime: resource.timestamp,
         };
       });
 
@@ -55,10 +56,11 @@ export const listUnclaimedResources = createAsyncThunk(
       const mappedResources = resources.map((resource) => {
         return {
           id: resource.fhir_resource_id,
+          creatorName: resource.creator_details,
           ironcoreDocumentId: resource.ironcore_document_id,
           creatorEthAddress: resource.creator_eth_address,
           resourceType: resource.fhir_resource_type,
-          createdTime: new Date(resource.timestamp).toLocaleDateString(),
+          createdTime: resource.timestamp,
         };
       });
 

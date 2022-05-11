@@ -95,8 +95,6 @@ export const createClaimedResource = async (payload) => {
  * Update the minted status of a claimed resource to be true
  */
 export const updateClaimedResourceMintStateTrue = async (payload) => {
-  // dbio/resources/claimed/mint/{creator_eth_address}/{fhir_resource_id}?minted=(true|false)
-  console.log(payload);
   const { ethAddress, fhirResourceId } = payload;
   try {
     await axios.put(
