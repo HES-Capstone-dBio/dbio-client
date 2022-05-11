@@ -40,10 +40,8 @@ export const listGrantedWriteRequests = createAsyncThunk(
             ethAddress: request.requestor_eth_address,
             requestApproved: request.request_approved,
             requestOpen: request.request_open,
-            createdTime: new Date(request.created_time).toLocaleDateString(),
-            grantedTime: new Date(
-              request.last_updated_time
-            ).toLocaleDateString(),
+            createdTime: request.created_time,
+            grantedTime: request.last_updated_time,
           };
         });
 
@@ -80,7 +78,7 @@ export const listPendingWriteRequests = createAsyncThunk(
             ethAddress: request.requestor_eth_address,
             requestApproved: request.request_approved,
             requestOpen: request.request_open,
-            createdTime: new Date(request.created_time).toLocaleDateString(),
+            createdTime: request.created_time,
           };
         });
       return {
@@ -117,10 +115,8 @@ export const listGrantedReadRequests = createAsyncThunk(
             ethAddress: request.requestor_eth_address,
             requestApproved: request.request_approved,
             requestOpen: request.request_open,
-            createdTime: new Date(request.created_time).toLocaleDateString(),
-            grantedTime: new Date(
-              request.last_updated_time
-            ).toLocaleDateString(),
+            createdTime: request.created_time,
+            grantedTime: request.last_updated_time,
           };
         });
       return {
@@ -158,7 +154,7 @@ export const listPendingReadRequests = createAsyncThunk(
             ethAddress: request.requestor_eth_address,
             requestApproved: request.request_approved,
             requestOpen: request.request_open,
-            createdTime: new Date(request.created_time).toLocaleDateString(),
+            createdTime: request.created_time,
           };
         });
 

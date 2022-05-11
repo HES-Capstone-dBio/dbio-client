@@ -159,7 +159,12 @@ const PendingReadRequestsTable = () => {
                         {row.name}
                       </TableCell>
                       <TableCell align="left">{row.ethAddress}</TableCell>
-                      <TableCell align="left">{row.createdTime}</TableCell>
+                      <TableCell align="left">
+                        {new Date(row.createdTime).toLocaleString(undefined, {
+                          timeStyle: "short",
+                          dateStyle: "short",
+                        })}
+                      </TableCell>
                     </TableRow>
                   );
                 })}
