@@ -10,6 +10,7 @@ import Toolbar from "@mui/material/Toolbar";
 import Typography from "@mui/material/Typography";
 import Paper from "@mui/material/Paper";
 import Button from "@mui/material/Button";
+import LoadingButton from "@mui/lab/LoadingButton";
 import { useSelector, useDispatch } from "react-redux";
 import { getComparator, stableSort } from "../../Utils/TableUtils";
 import ResourcesTableHead from "./ResourcesTableHead";
@@ -78,6 +79,7 @@ const ResourcesTable = (props) => {
     claimedResources,
     isError: resourceError,
     errorMessage: resourceErrorMessage,
+    isMintingNft,
   } = useSelector(resourcesSelector);
   const [order, setOrder] = useState("asc");
   const [orderBy, setOrderBy] = useState("createdTime");
@@ -108,8 +110,14 @@ const ResourcesTable = (props) => {
     setPage(0);
   };
 
-  const mintNftClickHandler = (id, voucher) => {
-    dispatch(mintNFT({ id, voucher: JSON.parse(voucher) }));
+  const mintNftClickHandler = (id, creatorEthAddress, voucher) => {
+    dispatch(
+      mintNFT({
+        fhirResourceId: id,
+        creatorEthAddress,
+        voucher: JSON.parse(voucher),
+      })
+    );
   };
 
   // Avoid a layout jump when reaching the last page with empty rows.
@@ -163,15 +171,21 @@ const ResourcesTable = (props) => {
                         </Button>
                       </TableCell>
                       <TableCell>
-                        <Button
+                        <LoadingButton
                           variant="contained"
                           size="small"
+                          loading={isMintingNft}
+                          disabled={row.nftMinted}
                           onClick={() =>
-                            mintNftClickHandler(row.id, row.ethNftVoucher)
+                            mintNftClickHandler(
+                              row.id,
+                              row.creatorEthAddress,
+                              row.ethNftVoucher
+                            )
                           }
                         >
                           Mint NFT
-                        </Button>
+                        </LoadingButton>
                       </TableCell>
                       <TableCell>
                         <Button
