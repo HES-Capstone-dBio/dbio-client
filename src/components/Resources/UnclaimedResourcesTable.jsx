@@ -30,6 +30,11 @@ const headCells = [
     label: "Record Type",
   },
   {
+    id: "creatorName",
+    numeric: false,
+    label: "Creator Name",
+  },
+  {
     id: "creatorEthAddress",
     numeric: false,
     label: "Creator Ethereum Address",
@@ -255,6 +260,9 @@ const ResourcesTable = (props) => {
                       </TableCell>
                       <TableCell component="th" id={labelId} scope="row">
                         {row.resourceType}
+                      </TableCell>
+                      <TableCell align="left">
+                        {row.creatorName}
                       </TableCell>
                       <TableCell align="left">
                         {row.creatorEthAddress}
