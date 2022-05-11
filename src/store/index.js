@@ -35,9 +35,9 @@ const loadFromLocalStorage = () => {
 
 const middleware = [ReduxThunk];
 
-// if (process.env.NODE_ENV !== "production") {
+if (process.env.NODE_ENV !== "production") {
   middleware.push(logger);
-// }
+}
 
 const enhancers = [...middleware];
 
@@ -48,7 +48,7 @@ const store = configureStore({
     user: userReducer,
     ui: uiReducer,
   },
-  // devTools: process.env.NODE_ENV !== "production",
+  devTools: process.env.NODE_ENV !== "production",
   devTools: true,
   preloadedState: loadFromLocalStorage(),
   middleware: enhancers,
