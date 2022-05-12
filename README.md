@@ -22,14 +22,14 @@ The React state management architecture on this application is primarily handled
 
 #### **Configuration**
 
-Configuration constants can be found in the **_constants.js_** file.
+Configuration constants can be found in the **_.env_** file.
 
 For future developers, if you wish to build on this client or run it you will need to do a few things.
 
-1. Create your own [Auth0](https://auth0.com/) application. Once this Auth0 application is created you will need you plug in your own Auth0 application domain and client id into the *AUTH0_DOMAIN* and *AUTH0_CLIENT_ID* variables in constants.js.
-2. Note that in *constants.js* the verifier is configured for google. You need to make sure you verifier on your Auth0 application is configured as google as well.
-3. The *BACKEND_ENDPOINT* constant is the URL address for the dBio protocol server.
-4. You will need to setup a [Torus](tor.us) verifier. Register with Torus and under their "Custom Auth" tab in the dashboard you can create your own verifier. In the below image you can see a verifier was created that uses a JWT login, has a verifier-id (This is used in constants.js), my Auth0 client ID and finally the Auth0 domain.
+1. Create your own [Auth0](https://auth0.com/) application. Once this Auth0 application is created you will need you plug in your own Auth0 application domain and client id into the *REACT_APP_AUTH0_DOMAIN* and *REACT_APP_AUTH0_CLIENT_ID* variables in the *.env* file.
+2. Note that you need to make sure you verifier on your Auth0 application is configured as google.
+3. The *REACT_APP_BACKEND_ENDPOINT* in *.env* is the URL address for the dBio protocol server.
+4. The *REACT_APP_TORUS_VERIFIER* in *.env* will need to be obtained from [Torus](tor.us). You will need to setup a [Torus](tor.us) verifier. Register with Torus and under their "Custom Auth" tab in the dashboard you can create your own verifier. In the below image you can see a verifier was created that uses a JWT login, has a verifier-id (This is used in .env), my Auth0 client ID and finally the Auth0 domain.
 
 ![torus-example](./readme-assets/torus.png)
 
