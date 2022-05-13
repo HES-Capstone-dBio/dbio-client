@@ -30,7 +30,7 @@ For future developers, if you wish to build on this client or run it you will ne
 2. Note that you need to make sure you verifier on your Auth0 application is configured as google.
 3. The *REACT_APP_BACKEND_ENDPOINT* in *.env* is the URL address for the dBio protocol server.
 4. The *REACT_APP_TORUS_VERIFIER* in *.env* will need to be obtained from [Torus](tor.us). You will need to setup a [Torus](tor.us) verifier. Register with Torus and under their "Custom Auth" tab in the dashboard you can create your own verifier. In the below image you can see a verifier was created that uses a JWT login, has a verifier-id (This is used in .env), my Auth0 client ID and finally the Auth0 domain.
-5. The *REACT_APP_INFURA_ENDPOINT* should be the endpoint for your Infura[https://infura.io/] project. The Infura API provides instant access over HTTPS and WebSockets to the Ethereum network.
+5. The *REACT_APP_INFURA_ENDPOINT* should be the endpoint for your [Infura](https://infura.io/) project. The Infura API provides instant access over HTTPS and WebSockets to the Ethereum network.
 6. The *REACT_APP_SMART_CONTRACT_ADDRESS* is the address of the smart contract used for minting patient resources as NFTs and transfering them to the patient. 
 
 ![torus-example](./readme-assets/torus.png)
