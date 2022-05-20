@@ -8,7 +8,6 @@ import JSONPretty from "react-json-pretty";
 import { AppBar, Divider, Typography, Toolbar } from "@mui/material";
 import { useLocation } from "react-router-dom";
 
-
 const RecordDetails = () => {
   const dispatch = useDispatch();
   const location = useLocation();
@@ -17,7 +16,9 @@ const RecordDetails = () => {
     useSelector(resourcesSelector);
 
   // Get recordId from location path name
-  const recordId = location.pathname.substring(location.pathname.lastIndexOf("/") + 1);
+  const recordId = location.pathname.substring(
+    location.pathname.lastIndexOf("/") + 1
+  );
 
   // Search for the record
   const claimedResource = claimedResources.find(
