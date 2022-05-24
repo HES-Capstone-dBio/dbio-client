@@ -6,18 +6,19 @@ import NotFound from "./NotFound";
 import Loading from "../components/Layout/Loading";
 import JSONPretty from "react-json-pretty";
 import { AppBar, Divider, Typography, Toolbar } from "@mui/material";
+import { useLocation } from "react-router-dom";
 
 const RecordDetails = () => {
   const dispatch = useDispatch();
+  const location = useLocation();
+
   const { claimedResources, currentResourceBody, isFetchingResource } =
     useSelector(resourcesSelector);
 
-  // @TODO Fix this, HACKY! This is a hacky way to get around using
-  // a higher order ProtectedRoute component and not being able
-  // to use the useParams hook to get record ID. I'm sure there's a
-  // solution to this.
-  const pathname = window.location.pathname;
-  const recordId = pathname.substring(pathname.lastIndexOf("/") + 1);
+  // Get recordId from location path name
+  const recordId = location.pathname.substring(
+    location.pathname.lastIndexOf("/") + 1
+  );
 
   // Search for the record
   const claimedResource = claimedResources.find(
